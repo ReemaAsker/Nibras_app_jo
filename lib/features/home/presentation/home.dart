@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 import 'package:nibras_group_jor/core/helper/constants/strings.dart';
 
@@ -23,9 +22,9 @@ class HomeScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -33,10 +32,10 @@ class HomeScreen extends StatelessWidget {
                 ListItem: _list,
                 hintText: 'المنشآت',
                 itemSelectedFunc: () {
-                  Navigator.pushNamed(context, firstCompanyInfo);
+                  print('');
                 },
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(20),

@@ -43,8 +43,15 @@ class _CustomDropDownHState extends State<CustomDropDownH> {
         hintText: widget.hintText,
         items: widget.ListItem,
         onChanged: (value) {
-          if (value == widget.ListItem[0]) {
-            widget.itemSelectedFunc();
+          if (widget.itemSelectedFunc() != '') {
+            if (value == widget.ListItem[0]) {
+              Navigator.pushNamed(context, firstCompanyInfo);
+              // widget.itemSelectedFunc();
+            } else if (value == widget.ListItem[1]) {
+              Navigator.pushNamed(context, commercialRecord);
+            } else if (value == widget.ListItem[2]) {
+              Navigator.pushNamed(context, authorizedSignatories);
+            }
           }
         });
   }

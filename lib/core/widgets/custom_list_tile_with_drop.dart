@@ -14,8 +14,6 @@ class CutomListTileWithdrop extends StatefulWidget {
 }
 
 class _CutomListTileState extends State<CutomListTileWithdrop> {
-  // final DropController dropController = Get.put(DropController());
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -37,53 +35,18 @@ class _CutomListTileState extends State<CutomListTileWithdrop> {
   }
 
   Widget dropWithoutTxt({int flex = 1, required List<String> options}) {
-    String clickword = options[0];
     return Expanded(
       flex: flex,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: CustomDropDownH(
           ListItem: options,
-          hintText: options[0],
-          
-          itemSelectedFunc: () {},
+          hintText: 'اختر', //options[0]
+          itemSelectedFunc: () {
+            return '';
+          },
         ),
       ),
     );
   }
 }
-//   Widget dropWithoutTxt({int flex = 1,required List<String> options}) {
-//     return Expanded(
-//       flex: flex,
-//       child: Padding(
-//         padding: const EdgeInsets.all(10.0),
-//         child: Container(
-//           decoration: BoxDecoration(
-//             border: Border.all(
-//               color: Colors.black,
-//             ),
-//             borderRadius: BorderRadius.circular(8),
-//           ),
-//           child: DropdownButton(
-//             padding:
-//                 EdgeInsets.symmetric(horizontal: 8), // Adjust padding as needed
-//             isExpanded: true,
-//             value: "القاهرة",
-//             items: [
-//               DropdownMenuItem(child: Text("القاهرة"), value: "القاهرة"),
-//               DropdownMenuItem(
-//                 child: Text("القدس"),
-//                 value: "القدس",
-//               ),
-//             ],
-//             onChanged: (value) {},
-//             icon: Padding(
-//               padding: EdgeInsets.only(right: 8), // Adjust padding as needed
-//               child: Icon(Icons.arrow_circle_down_sharp),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
