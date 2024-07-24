@@ -29,6 +29,7 @@ class _CalendarPickerWidgetState extends State<CalendarPickerWidget> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
+        margin: EdgeInsets.only(top: 10),
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),

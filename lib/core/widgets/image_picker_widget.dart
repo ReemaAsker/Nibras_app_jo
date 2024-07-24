@@ -6,9 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 
 class ImagePickerWidget extends StatefulWidget {
-  const ImagePickerWidget({
-    super.key,
-  });
+  const ImagePickerWidget({super.key, this.defult_icon = Icons.home});
+  final IconData defult_icon;
 
   @override
   State<ImagePickerWidget> createState() => _ImagePickerState();
@@ -106,6 +105,21 @@ class _ImagePickerState extends State<ImagePickerWidget> {
                     width: 8,
                   ),
                   Text('اضغط هنا لرفع الصورة '),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: imageProvider,
+                    child: _image == null
+                        ? Icon(
+                            widget.defult_icon,
+                            size: 30,
+                            color: Colors.grey[600],
+                          )
+                        : null,
+                  ),
                 ],
               ),
             ),

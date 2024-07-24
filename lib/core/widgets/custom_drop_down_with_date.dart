@@ -77,7 +77,7 @@ class _CustomListTileWithDateState extends State<CustomListTileWithDate> {
                   widget.forEdit
                       ? ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xffffc200),
+                            backgroundColor: MyColors.custom_yellow,
                             foregroundColor: Colors.black,
                             elevation: 3,
                           ),

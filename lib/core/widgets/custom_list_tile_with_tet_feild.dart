@@ -9,6 +9,8 @@ class CutomListTileWithTextFeild extends StatefulWidget {
   final bool? withcolumn;
   final bool? enabled;
   final List<String>? hintLabel;
+  final List<int>? labelExpanded;
+
   const CutomListTileWithTextFeild({
     Key? key,
     required this.title,
@@ -17,6 +19,7 @@ class CutomListTileWithTextFeild extends StatefulWidget {
     this.withcolumn,
     this.enabled = true,
     this.hintLabel,
+    this.labelExpanded,
   }) : super(key: key);
   @override
   State<CutomListTileWithTextFeild> createState() => _CutomListTileState();
@@ -33,7 +36,9 @@ class _CutomListTileState extends State<CutomListTileWithTextFeild> {
       subtitle: Row(
         children: List.generate(widget.numOfTxTf, (index) {
           return Expanded(
-            flex: index + 1,
+            flex: widget.labelExpanded == null
+                ? index + 1
+                : widget.labelExpanded![index],
             child: Padding(
                 padding: (widget.maxline != null && index == 1)
                     ? EdgeInsets.only(left: 20.0)

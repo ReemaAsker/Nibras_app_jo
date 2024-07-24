@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 
 import '../../../../../../core/widgets/clander_picker_image.dart';
@@ -130,7 +129,9 @@ class _AuthorizedSignatoriesState extends State<AuthorizedSignatories> {
                   ),
                   const CustomListTile(
                     title: 'صورة للمفوض ',
-                    element: ImagePickerWidget(),
+                    element: ImagePickerWidget(
+                      defult_icon: Icons.person,
+                    ),
                   ),
                   CustomListTile(
                     element: CalendarPickerWidget(

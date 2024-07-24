@@ -5,3 +5,4 @@ const homeScreen = '/home_page';
 const firstCompanyInfo = '/firstCompanyInfo';
 const commercialRecord = '/commercialRecord';
 const authorizedSignatories = '/authorizedSignatories';
+const personsDefination = '/personsDefination';

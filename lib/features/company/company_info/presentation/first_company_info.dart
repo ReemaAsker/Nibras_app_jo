@@ -94,7 +94,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
               ),
               CustomListTile(
                 title: 'صورة لشعار المنشأة',
-                element: ImagePickerWidget(),
+                element: ImagePickerWidget(
+                  defult_icon: Icons.home,
+                ),
               ),
               Row(
                 children: [

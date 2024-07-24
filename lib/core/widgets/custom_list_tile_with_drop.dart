@@ -38,7 +38,7 @@ class _CutomListTileState extends State<CutomListTileWithdrop> {
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(8.0),
         child: CustomDropDownH(
           ListItem: options,
           hintText: 'اختر', //options[0]
