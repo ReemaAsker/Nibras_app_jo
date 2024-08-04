@@ -170,6 +170,7 @@
 import 'package:flutter/material.dart';
 import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 import 'package:nibras_group_jor/core/helper/constants/strings.dart';
+import 'package:nibras_group_jor/core/widgets/validations_rules.dart';
 import '../../../core/widgets/custom_text_feild.dart'; // Importing a custom text field widget
 import 'package:intl/intl.dart'; // Importing intl package for date and time formatting
 
@@ -271,12 +272,14 @@ class _MyWidgetState extends State<Login> {
                       ],
                     ),
                     SizedBox(height: 40), // Spacer
-                    const CustomTextField(
+                    CustomTextField(
+                      validator: (value) => IsTextEmpty(value),
                       label: 'اسم المستخدم', // Username field label
                       hintText: '  ',
                     ),
                     SizedBox(height: 20), // Spacer
                     CustomTextField(
+                      // validator: (value) => passwordValidation(value),
                       label: 'كلمة المرور', // Password field label
                       hintText: '  ',
                       obscureText:

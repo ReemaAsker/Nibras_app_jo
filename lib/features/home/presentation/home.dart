@@ -34,11 +34,11 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomDropDownH(
+                homeDropDown: true,
                 ListItem: _list,
                 hintText: 'المنشآت',
-                itemSelectedFunc: () {
-                  print('');
-                },
+                onChanged: (value) {},
+                
               ),
               const SizedBox(height: 10),
               InkWell(

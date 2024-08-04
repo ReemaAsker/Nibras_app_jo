@@ -7,6 +7,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final bool obscureText;
   final Widget suffixIcon;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     required this.label,
@@ -14,6 +15,7 @@ class CustomTextField extends StatefulWidget {
     this.obscureText = false,
     this.suffixIcon = const Text(''),
     Key? key,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -33,13 +35,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         SizedBox(height: 8),
         TextFormField(
-          validator: (value) {
-            if (value == null || value!.isEmpty) {
-              return "* مطلوب";
-            } else if (value.length < 6) {
-              return "كلمة المرور خاطئة";
-            }
-          },
+          validator: widget.validator,
+          // (value) {
+          //   if (value == null || value!.isEmpty) {
+          //     return "* مطلوب";
+          //   } else if (value.length < 6) {
+          //     return "كلمة المرور خاطئة";
+          //   }
+          // },
           obscureText: widget.obscureText,
           decoration: InputDecoration(
             suffixIcon: widget.suffixIcon,

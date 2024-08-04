@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:nibras_group_jor/core/AppRouter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
+import 'package:nibras_group_jor/core/helper/injection.dart';
 
 void main() {
+  initGetIt();
   runApp(NibrasApp(
     appRouter: AppRouter(),
   ));
@@ -16,7 +18,6 @@ class NibrasApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           color: MyColors

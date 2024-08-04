@@ -11,6 +11,8 @@ import 'package:nibras_group_jor/features/home/presentation/home.dart';
 
 import '../features/Authontication/data/webservices/auth_webservice.dart';
 import '../features/company/company_info/commercial_record/authorized_signatorie.dart/presentation/authorized_signatories.dart';
+import '../core/helper/injection.dart';
+import '../features/company/company_info/business_logic/cubit/company_cubit.dart';
 
 class AppRouter {
   late AuthRepo authRepo;
@@ -33,13 +35,17 @@ class AppRouter {
       case homeScreen:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case firstCompanyInfo:
-        return MaterialPageRoute(builder: (_) => const FirstCompnayInfo());
-      case commercialRecord:
-        return MaterialPageRoute(builder: (_) => const CommercialRecord());
-      case authorizedSignatories:
-        return MaterialPageRoute(builder: (_) => const AuthorizedSignatories());
-      case personsDefination:
-        return MaterialPageRoute(builder: (_) => const PersonsDefination());
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (context) => getIt<CompanyCubit>(),
+                  child: const FirstCompnayInfo(),
+                ));
+      // case commercialRecord:
+      //   return MaterialPageRoute(builder: (_) => const CommercialRecord());
+      // case authorizedSignatories:
+      //   return MaterialPageRoute(builder: (_) => const AuthorizedSignatories());
+      // case personsDefination:
+      //   return MaterialPageRoute(builder: (_) => const PersonsDefination());
     }
   }
 }

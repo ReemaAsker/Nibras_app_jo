@@ -10,6 +10,8 @@ class CutomListTileWithTextFeild extends StatefulWidget {
   final bool? enabled;
   final List<String>? hintLabel;
   final List<int>? labelExpanded;
+  final List<TextEditingController> controllers;
+  final String? Function(String?)? validator;
 
   const CutomListTileWithTextFeild({
     Key? key,
@@ -20,6 +22,8 @@ class CutomListTileWithTextFeild extends StatefulWidget {
     this.enabled = true,
     this.hintLabel,
     this.labelExpanded,
+    required this.controllers,
+    this.validator,
   }) : super(key: key);
   @override
   State<CutomListTileWithTextFeild> createState() => _CutomListTileState();
@@ -44,11 +48,13 @@ class _CutomListTileState extends State<CutomListTileWithTextFeild> {
                     ? EdgeInsets.only(left: 20.0)
                     : EdgeInsets.only(left: 8.0),
                 child: TextFormField(
+                  validator: widget.validator,
+                  controller: widget.controllers[index],
                   enabled: widget.enabled,
                   maxLines: widget.maxline,
                   decoration: InputDecoration(
                     focusColor: MyColors.custom_yellow,
-                    contentPadding: EdgeInsets.all(10),
+                    contentPadding: EdgeInsets.all(8),
                     hintStyle: TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8))),
