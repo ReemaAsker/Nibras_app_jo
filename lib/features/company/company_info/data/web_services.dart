@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
-
+import 'package:dio/dio.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/company.dart';
 
 part 'web_services.g.dart';
