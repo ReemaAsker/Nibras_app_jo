@@ -1,9 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nibras_group_jor/core/widgets/custom_floating_action_button.dart';
 import 'package:nibras_group_jor/core/widgets/validations_rules.dart';
 import 'package:nibras_group_jor/features/company/company_info/business_logic/cubit/company_cubit.dart';
-import 'package:nibras_group_jor/features/company/company_info/data/api_response.dart';
 
 import '../../../../core/widgets/customListTile.dart';
 import '../../../../core/widgets/custom_botoom_sheet.dart';
@@ -193,7 +193,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo>
   dynamic _selectedImage;
 
   void _onImagePicked(dynamic image) {
-    _selectedImage = image;
+    setState(() {
+      _selectedImage = image;
+    });
   }
 
   Widget searchTextFeild() {
@@ -297,6 +299,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo>
               key: _formKey,
               child: Column(
                 children: [
+                  ElevatedButton(
+                      onPressed: () => print("hello"), child: Text("hello")),
                   CutomListTileWithTextFeild(
                     validator: (value) => IsTextEmpty(value),
                     controllers: [
@@ -465,23 +469,28 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo>
                       ),
                     ],
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // // printAll();
-                        // print(
-                        //     "100%"); // Navigate to home screen if the form is valid
+                  TextButton(
+                      onPressed: () => print("hello"), child: Text("hello"))
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     print("dsg");
+                  //     // uploadFile(_selectedImage);
+                  //     // if (_formKey.currentState!.validate()) {
+                  //     //   // // printAll();
+                  //     //   // print(
+                  //     //   //     "100%"); // Navigate to home screen if the form is valid
 
-                        // BlocProvider.of<CompanyCubit>(context)
-                        //     .company_Repo
-                        //     .createNewCompany(newCompany);
-                        context
-                            .read<CompanyCubit>()
-                            .emitCreateCompany(createCompany());
-                      }
-                    },
-                    child: const Text('سجل جديد'),
-                  )
+                  //     //   // BlocProvider.of<CompanyCubit>(context)
+                  //     //   //     .company_Repo
+                  //     //   //     .createNewCompany(newCompany);
+
+                  //     //   context
+                  //     //       .read<CompanyCubit>()
+                  //     //       .emitCreateCompany(createCompany());
+                  //     // }
+                  //   },
+                  //   child: const Text('سجل جديد'),
+                  // )
                 ],
               ),
             ),
@@ -527,5 +536,23 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo>
       print(e.toString());
     }
     return newCompany;
+  }
+}
+
+Future<void> uploadFile(String filePath) async {
+  final dio = Dio();
+  final fileName = filePath;
+
+  FormData formData = FormData.fromMap({
+    "file": await MultipartFile.fromFile(filePath, filename: fileName),
+  });
+  try {
+    final response = await dio.post(
+      'https://srv568036.hstgr.cloud/api/company/create-company/',
+      data: formData,
+    );
+    print('File upload response: ${response.data}');
+  } catch (e) {
+    print('File upload error: $e');
   }
 }

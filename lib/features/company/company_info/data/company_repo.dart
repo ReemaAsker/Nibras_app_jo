@@ -11,7 +11,13 @@ class CompanyRepo {
   }
 
   Future<Company> createNewCompany(Company newCompany) async {
-    var response = await webservices.createCompany(newCompany);
+    var response;
+    webservices.createCompany(response).then((value) {
+      print("************************");
+      response = value;
+      print(value);
+      print("************************");
+    });
 
     return response;
   }

@@ -22,22 +22,34 @@ class CompanyCubit extends Cubit<CompanyState> {
   }
 
   void emitCreateCompany(Company newCompany) async {
-    try {
-      emit(CompanyLoading("يتم التحميل..."));
-      var response = await company_Repo.createNewCompany(newCompany);
-      emit(CompanySuccess(response, 'تمت عملية انشاء المنشأة بنجاح !'));
-    } on DioException catch (dioError) {
-      String errorMessage;
-      if (dioError.response != null && dioError.response?.data != null) {
-        errorMessage =
-            dioError.response?.data['message'] ?? 'An unknown error occurred';
-      } else {
-        errorMessage = dioError.response!.statusMessage!;
-      }
-      emit(CompanyError(errorMessage));
-    } catch (e) {
-      emit(CompanyError(e.toString()));
-    }
+    // try {
+    // emit(CompanyLoading("يتم التحميل..."));
+    print("^^^^^^^^^^^^^^^^^^");
+    var response = await company_Repo.createNewCompany(newCompany).then(
+      (value) {
+        print("{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}");
+        print(value);
+        print("{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}");
+      },
+    );
+    print(response);
+    emit(CompanySuccess(response, "ok"));
+    // } on DioException catch (dioError) {
+    //   String errorMessage;
+    //   if (dioError.response != null && dioError.response?.data != null) {
+    //     errorMessage =
+    //         dioError.response?.data['message'] ?? 'An unknown error occurred';
+    //   } else {
+    //     errorMessage = dioError.response!.statusMessage!;
+    //   }
+
+    // emit(CompanyError(errorMessage));
+    // } catch (e) {
+    //   print("================================");
+    //   print(e);
+    //   print("================================");
+    //   emit(CompanyError(e.toString()));
+    // }
   }
   // try {
   //   emit(CompanyLoading("يتم التحميل..."));

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/file_conventar.dart';
 
