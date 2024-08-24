@@ -63,7 +63,7 @@ class _CustomListTileWithDateState extends State<CustomListTileWithDate> {
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(left: 8.0),
+              padding: EdgeInsets.only(left: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[

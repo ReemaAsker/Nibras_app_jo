@@ -11,10 +11,17 @@ class CompanyLoading extends CompanyState {
 }
 
 class CompanySuccess extends CompanyState {
-  final Company company;
+  final dynamic company;
   final String message;
 
   CompanySuccess(this.company, this.message);
+}
+
+class CompanyFromAPISuccess extends CompanyState {
+  final dynamic company;
+  final String message;
+
+  CompanyFromAPISuccess(this.company, this.message);
 }
 
 class CompanyError extends CompanyState {
@@ -22,16 +29,69 @@ class CompanyError extends CompanyState {
   CompanyError(this.message);
 }
 
-// class getCompanyDetail extends CompanyState {
-//   Company companyDetail;
-//   getCompanyDetail({
-//     required this.companyDetail,
-//   });
-// }
+class CompanyFromAPILoading extends CompanyState {
+  final String message;
+  CompanyFromAPILoading(this.message);
+}
 
-// class CreateCompany extends CompanyState {
-//   Company newCompany;
-//   CreateCompany({
-//     required this.newCompany,
-//   });
-// }
+class CompanyFilteringLoading extends CompanyState {
+  final String message;
+  CompanyFilteringLoading(this.message);
+}
+
+class CompanyDeletedSuccess extends CompanyState {
+  final String message;
+  final bool isDeleted;
+
+  CompanyDeletedSuccess(
+    this.isDeleted,
+    this.message,
+  );
+}
+
+class CompanyUpdatedSuccess extends CompanyState {
+  final bool isUpdated;
+
+  final String message;
+  CompanyUpdatedSuccess(
+    this.isUpdated,
+    this.message,
+  );
+}
+
+class CompanyNotFound extends CompanyState {
+  final String message;
+  CompanyNotFound(
+    this.message,
+  );
+}
+
+class CompanySearch extends CompanyState {
+  final dynamic data;
+  final String message;
+
+  CompanySearch(this.data, this.message);
+}
+
+class DisplyingDataSuccess extends CompanyState {
+  final Company data;
+  final String message;
+
+  DisplyingDataSuccess(this.data, this.message);
+}
+
+class CompanySelected extends CompanyState {
+  final CompanyInfoFromApi selectedCompany;
+  CompanySelected(this.selectedCompany);
+}
+
+class DisplayingDataSuccess extends CompanyState {
+  final Company data;
+  DisplayingDataSuccess(this.data);
+}
+
+class NoState extends CompanyState {
+  final int lastId;
+  final List<String> types;
+  NoState(this.lastId, this.types);
+}

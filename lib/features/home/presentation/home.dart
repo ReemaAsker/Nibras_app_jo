@@ -12,13 +12,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final List<String> _list = [
+    'المعلومات الأولية للمنشأة',
+    'السجل التجاري للمنشأة',
+    'المفوضون بالتوقيع عن المنشأة',
+  ];
   @override
   Widget build(BuildContext context) {
-    const List<String> _list = [
-      'المعلومات الأولية للمنشأة',
-      'السجل التجاري للمنشأة',
-      'المفوضون بالتوقيع عن المنشأة',
-    ];
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -38,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ListItem: _list,
                 hintText: 'المنشآت',
                 onChanged: (value) {},
-                
               ),
               const SizedBox(height: 10),
               InkWell(

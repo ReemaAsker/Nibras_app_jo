@@ -35,17 +35,13 @@ class AppRouter {
       case homeScreen:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case firstCompanyInfo:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (context) => getIt<CompanyCubit>(),
-                  child: const FirstCompnayInfo(),
-                ));
-      // case commercialRecord:
-      //   return MaterialPageRoute(builder: (_) => const CommercialRecord());
-      // case authorizedSignatories:
-      //   return MaterialPageRoute(builder: (_) => const AuthorizedSignatories());
-      // case personsDefination:
-      //   return MaterialPageRoute(builder: (_) => const PersonsDefination());
+        return MaterialPageRoute(builder: (_) => const FirstCompnayInfo());
+      case commercialRecord:
+        return MaterialPageRoute(builder: (_) => const CommercialRecord());
+      case authorizedSignatories:
+        return MaterialPageRoute(builder: (_) => const AuthorizedSignatories());
+      case personsDefination:
+        return MaterialPageRoute(builder: (_) => const PersonsDefination());
     }
   }
 }

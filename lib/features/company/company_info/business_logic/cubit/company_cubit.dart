@@ -1,66 +1,198 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/company_repo.dart';
+import 'package:nibras_group_jor/features/company/company_info/data/models/company_title.dart';
 
-import '../../data/company.dart';
+import '../../../../../core/helper/api_Exception.dart';
+import '../../data/models/CompanyType.dart';
+import '../../data/models/company.dart';
+import '../../data/models/companyInfoFromApi.dart';
+import 'filterCompanies/FilterCompaniesCubit.dart';
 
 part 'company_state.dart';
 
 class CompanyCubit extends Cubit<CompanyState> {
   final CompanyRepo company_Repo;
+  List<CompanyInfoFromApi> allCompanies = [];
+
   CompanyCubit(this.company_Repo) : super(CompanyInitial());
 
-  Future<void> getCompanyById(int id) async {
+  // Future<int> lastId(BuildContext context) async {
+  //   List<CompanyInfoFromApi> companies = [];
+  //   try {
+  //     List<CompanyInfoFromApi> companies = await filterCu.filterCompanies();
+  //   } catch (e, st) {
+  //     print("@@@@@@@@@@@@@");
+  //     print(e);
+  //     print(st);
+  //   }
+  //   return companies
+  //       .map((company) => company.id)
+  //       .reduce((a, b) => a > b ? a : b);
+  // }
+
+  // Future<int> lastId(BuildContext context) async {
+
+  // }
+  Future<int> noState() async {
+    List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
+
+    int latestId =
+        companies.map((company) => company.id).reduce((a, b) => a > b ? a : b);
+    List<String> companiesTypes = await getCompanyTypes();
+    emit(NoState(latestId, companiesTypes));
+
+    return latestId;
+  }
+
+  Future<List<String>> getCompanyTypes() async {
+    List<CompanyType> companies = await company_Repo.getCompanyTypes();
+
+    // Map over the list and extract the companyTypeName field
+    List<String> companyTypeNames =
+        companies.map((company) => company.compType ?? '').toList();
+    return companyTypeNames;
+  }
+
+  Future<List<CompanyTitle>> getCompanyTitles() async {
+    List<CompanyTitle> companies = await company_Repo.getCompanyTitles();
+    return companies;
+  }
+
+  // Future<List<CompanyTitle>> getNationals() async {
+  //   List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
+
+  //   return companyTypeNames;
+  // }
+  // Future<int> GetCompanyTitles() async {
+  //   List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
+
+  //   int latestId =
+  //       companies.map((company) => company.id).reduce((a, b) => a > b ? a : b);
+
+  //   emit(NoState(latestId));
+
+  //   return latestId;
+  // }
+
+  // Future<int> GetCompanyCountries() async {
+  //   List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
+
+  //   int latestId =
+  //       companies.map((company) => company.id).reduce((a, b) => a > b ? a : b);
+
+  //   emit(NoState(latestId));
+
+  //   return latestId;
+  // }
+
+  dynamic createCompany(Company newCompany) async {
     try {
       emit(CompanyLoading("يتم التحميل..."));
-      var response = await company_Repo.getCompanyById(id);
-      emit(CompanySuccess(response, 'تمت عملية انشاء المنشأة بنجاح !'));
+      var response = await company_Repo.createNewCompany(newCompany);
+      emit(CompanySuccess(response, "تم انشاء المنشأة بنجاح"));
+    } catch (e, s) {
+      emit(CompanyError("خطأ"));
+
+      print("t@@@@@@@@@@@@@@@@@@@");
+      print("$e");
+      print("$s");
+      // throw _handleDioError(e);
+    }
+  }
+
+  Future<void> deleteCompany(int id) async {
+    try {
+      // emit(CompanyLoading("يتم التحميل..."));
+      bool response = await company_Repo.deleteCompany(id);
+      if (response) {
+        emit(CompanyDeletedSuccess(response, 'تمت عملية حذف المنشأة بنجاح !'));
+      } else {
+        emit(CompanyNotFound('!الشركة المراد حذفها غير موجودة'));
+      }
     } catch (e) {
       emit(CompanyError(e.toString()));
     }
   }
 
-  void emitCreateCompany(Company newCompany) async {
-    // try {
-    // emit(CompanyLoading("يتم التحميل..."));
-    print("^^^^^^^^^^^^^^^^^^");
-    var response = await company_Repo.createNewCompany(newCompany).then(
-      (value) {
-        print("{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}");
-        print(value);
-        print("{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}");
-      },
-    );
-    print(response);
-    emit(CompanySuccess(response, "ok"));
-    // } on DioException catch (dioError) {
-    //   String errorMessage;
-    //   if (dioError.response != null && dioError.response?.data != null) {
-    //     errorMessage =
-    //         dioError.response?.data['message'] ?? 'An unknown error occurred';
-    //   } else {
-    //     errorMessage = dioError.response!.statusMessage!;
-    //   }
-
-    // emit(CompanyError(errorMessage));
-    // } catch (e) {
-    //   print("================================");
-    //   print(e);
-    //   print("================================");
-    //   emit(CompanyError(e.toString()));
-    // }
+  Future<void> UpdateCompany(int id, String companyName) async {
+    try {
+      // emit(CompanyLoading("يتم التحميل..."));
+      bool response = await company_Repo.updateCompany(id, companyName);
+      emit(CompanyUpdatedSuccess(response, 'تمت عملية تعديل المنشأة بنجاح !'));
+    } catch (e) {
+      emit(CompanyError(e.toString()));
+    }
   }
-  // try {
-  //   emit(CompanyLoading("يتم التحميل..."));
-  //   var response = await company_Repo.createNewCompany(newCompany);
-  //   emit(CompanySuccess(response, 'تمت عملية انشاء المنشأة بنجاح !'));
-  // } catch (e) {
-  //   emit(CompanyError(e.toString()));
-  // }
 
-  //////////////////////
-  // company_Repo.createNewCompany(newCompany).then((newCompany) {
-  //   emit(CreateCompany(newCompany: newCompany));
-  // });
+  Future<List<CompanyInfoFromApi>> filterCompanies() async {
+    try {
+      emit(CompanyFromAPILoading("يتم التحميل..."));
+      allCompanies = await company_Repo.getAllCompanies();
+      emit(CompanyFromAPISuccess(allCompanies, 'تم التحميل بنجاح'));
+    } catch (e) {
+      emit(CompanyError("$e"));
+    }
+    return allCompanies;
+  }
+
+  void filterData(String query) {
+    List<CompanyInfoFromApi> filterCompaniesDependOnCompanyName =
+        allCompanies.where((item) {
+      final value = item.companyName;
+      return value.toString().toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    emit(
+        CompanySearch(filterCompaniesDependOnCompanyName, "تمت العملية بنجاح"));
+  }
+
+  // Method to handle company selection
+  void selectCompany(CompanyInfoFromApi company) {
+    emit(CompanySelected(company));
+    // Fetch company details if needed
+    fetchCompanyDetails(company.id);
+  }
+
+  // Method to fetch company details and emit display state
+  void fetchCompanyDetails(int companyId) async {
+    try {
+      emit(CompanyFilteringLoading("يتم التحميل.."));
+      // Fetch company details from API or database
+      Company company = await companyData(companyId);
+      emit(DisplayingDataSuccess(company));
+    } catch (e) {
+      emit(CompanyError('فشل تحميل البيانات'));
+    }
+  }
+
+  Future<Company> companyData(int id) async {
+    var companyDataById;
+    try {
+      // emit(CompanyLoading("يتم التحميل..."));
+      companyDataById = await company_Repo.getCompanyById(id);
+      // emit(DisplyingDataSuccess(
+      //     companyDataById, "تم تحميل بيانات الشركة بنجاح"));
+    } catch (e) {
+      // emit(CompanyError("$e"));
+    }
+    return companyDataById;
+  }
+
+  AppException _handleError(Response response) {
+    switch (response.statusCode) {
+      case 400:
+        return BadRequestException(response.statusMessage);
+      case 401:
+      case 403:
+        return UnauthorisedException(response.statusMessage);
+      case 500:
+      default:
+        return FetchDataException(
+            'Error occurred with status code: ${response.statusCode}');
+    }
+  }
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:nibras_group_jor/core/widgets/custom_drop_down_widgett_.dart';
 
@@ -9,21 +10,22 @@ class CutomListTileWithdrop<T> extends StatefulWidget {
   final List<String> options;
   final bool homeDropDown;
   final String? Function(String?)? validator;
-
-  const CutomListTileWithdrop({
-    Key? key,
+  bool? enabled;
+  CutomListTileWithdrop({
+    super.key,
     this.withTxt = true,
     required this.onChanged,
     required this.options,
     this.homeDropDown = false,
     this.validator,
-  }) : super(key: key);
+    this.enabled,
+  });
 
   @override
-  State<CutomListTileWithdrop> createState() => _CutomListTileState();
+  State<CutomListTileWithdrop> createState() => CutomListTileState();
 }
 
-class _CutomListTileState extends State<CutomListTileWithdrop> {
+class CutomListTileState extends State<CutomListTileWithdrop> {
   @override
   Widget build(BuildContext context) {
     return Row(

@@ -9,6 +9,7 @@ import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 import 'package:nibras_group_jor/core/widgets/validations_rules.dart';
 import 'package:nibras_group_jor/features/company/company_info/business_logic/cubit/company_cubit.dart';
 import '../../../../core/widgets/customListTile.dart';
+import '../../../../core/widgets/filtering_screen.dart';
 import '../../../../core/widgets/custom_drop_down_with_date.dart';
 import '../../../../core/widgets/custom_list_tile_with_drop.dart';
 import '../../../../core/widgets/custom_list_tile_with_tet_feild.dart';
@@ -18,14 +19,14 @@ import 'package:cool_alert/cool_alert.dart';
 
 import '../data/models/companyInfoFromApi.dart';
 
-class FirstCompnayInfo extends StatefulWidget {
-  const FirstCompnayInfo({super.key});
+class tt extends StatefulWidget {
+  const tt({super.key});
 
   @override
-  State<FirstCompnayInfo> createState() => _FirstCompnayInfoState();
+  State<tt> createState() => _FirstCompnayInfoState();
 }
 
-class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
+class _FirstCompnayInfoState extends State<tt> {
   CompanyCubit companyCubit = GetIt.instance<CompanyCubit>();
   GlobalKey<ImagePickerState> imagePickerKey = GlobalKey<ImagePickerState>();
   GlobalKey<CutomListTileState> dropDwonButtonTypeIdKey =
@@ -89,30 +90,14 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   bool _isDisplayAllCompanyData = false;
   int new_id = 0;
 
-  List<String> companyTypes = [];
-
   @override
   void initState() {
-    companyCubit.noState().then(
-      (lastId) {
-        new_id = lastId + 1;
-      },
-      // );
-      // companyCubit.getCompanyTypes().then(
-      //   (listAllTypes) {
-      //     companyTypes = listAllTypes;
-      //     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-      //     print(companyTypes);
-      //     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-      //     setState(() {});
-      //     // for (var company in listAllTypes) {
-      //     //   print('ID: ${company.id}');
-      //     //   print('Name: ${company.compType}');
-      //     //   print('Description: ${company.compDesc}');
-      //     //   print('---'); // Separator between companies
-      //     // }
-      //   },
-    );
+    // companyCubit.company_Repo.getLatestId().then(
+    //   (value) {
+    //     new_id = value + 1;
+    //     setState(() {});
+    //   },
+    // );
     super.initState();
   }
 
@@ -156,10 +141,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   Widget searchTextFeild() {
     return Container(
       child: TextFormField(
-        onChanged: companyCubit.filterData,
-        controller: _searchController,
         decoration: InputDecoration(
-          hintText: 'بحث عن شركة..',
           contentPadding: EdgeInsets.all(8.0),
           focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.grey),
@@ -221,7 +203,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
 
   void clearAllFields() {
     _textControllerForCompanyNameID.clear();
-    _textControllerForCompanyDesc.clear();
+
     _textControllerForTradeMark.clear();
     _textControllerForCompanyTitleId.clear();
     _textControllerForCompanyNamePrefix.clear();
@@ -250,7 +232,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     _textControllerForCompanyCatId.text = "";
     _textControllerForCompanyTypeId.text = "";
     _textControllerForCompanyCountryID.text = "";
-    // _selectedImage = null;
+    _selectedImage = null;
     setState(() {});
   }
 
@@ -268,21 +250,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             padding: EdgeInsets.only(left: 10),
             child: IconButton(
                 onPressed: () {
-                  try {
-                    toggleSearch();
-
-                    if (!_isSearch) {
-                      companyCubit.noState().then(
-                        (value) {
-                          new_id = value;
-                        },
-                      );
-                    }
-                  } catch (e, st) {
-                    print("***********************");
-                    print(e);
-                    print(st);
-                  }
+                  toggleSearch();
                 },
                 icon: Icon(
                   _isSearch ? Icons.close : Icons.search,
@@ -298,7 +266,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                         _isDisplayAllCompanyData = false;
 
                         clearAllFields();
-                        // setState(() {});
+                        setState(() {});
                       },
                       icon: Icon(
                         Icons.add_circle_rounded,
@@ -309,191 +277,305 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
               : Text("")
         ],
       ),
-      body: mainWidget(),
-    );
-  }
+//       body: _isSearch
+//           ? Padding(
+//               padding: EdgeInsets.symmetric(horizontal: 20),
+//               child: SafeArea(
+//                 child: FilteringScreen(
+//                   title: 'الشركات',
+//                   // onCompanySelected: (isSearch) {
+//                   //   _isSearch = isSearch;
+//                   //   // selectedCompany = Company;
+//                   //   // toggleSearch();
+//                   // },
+//                   showCompanyCubit: companyCubit,
+//                 ),
+//               ),
+//             )
+//           : BlocListener<CompanyCubit, CompanyState>(
+//               listener: (context, state) {
+//                 if (state is CompanyLoading) {
+//                   CoolAlert.show(
+//                     context: context,
+//                     type: CoolAlertType.loading,
+//                     text: state.message,
+//                   );
+//                 } else if (state is CompanySuccess) {
+//                   clearAllFields();
 
-  Widget mainWidget() {
-    return BlocListener<CompanyCubit, CompanyState>(
-      listener: (context, state) {
-        if (state is NoState) {
-          new_id = state.lastId;
-          companyTypes = state.types;
-          clearAllFields();
-        } else if (state is CompanyFromAPILoading) {
-        } else if (state is CompanyFilteringLoading) {
-        } else if (state is CompanySearch) {
-        } else if (state is CompanyLoading) {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.loading,
-            text: state.message,
-          );
-        } else if (state is CompanySuccess) {
-          clearAllFields();
+//                   CoolAlert.show(
+//                     title: "تم الانشاء",
+//                     context: context,
+//                     type: CoolAlertType.success,
+//                     text: state.message,
+//                   );
 
-          CoolAlert.show(
-            title: "تم الانشاء",
-            context: context,
-            type: CoolAlertType.success,
-            text: state.message,
-          );
-        } else if (state is CompanyError) {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.error,
-            text: 'خطأ',
-          );
-        } else if (state is CompanyDeletedSuccess) {
-          CoolAlert.show(
-            title: "تم الحذف",
-            context: context,
-            type: CoolAlertType.success,
-            text: state.message,
-          );
-          _isDisplayAllCompanyData = false;
-          clearAllFields();
-        } else if (state is CompanyUpdatedSuccess) {
-          CoolAlert.show(
-            title: "تم التعديل",
-            context: context,
-            type: CoolAlertType.success,
-            text: state.message,
-          );
-          _isDisplayAllCompanyData = false;
-          clearAllFields();
-        } else if (state is CompanyNotFound) {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.error,
-            text: state.message,
-          );
-          clearAllFields();
-          toggleSearch();
-        }
-        //else if (state is DisplyingDataSuccess) {
-        //   CoolAlert.show(
-        //     context: context,
-        //     type: CoolAlertType.success,
-        //     text: state.message,
-        //   );
-        //   fillCompanyData(state.data);
-        //   // _isSearch = false;
-        //   clearAllFields();
-        else if (state is DisplayingDataSuccess) {
-          _isSearch = false;
-          _isDisplayAllCompanyData = true;
+// //
+//                   // setState(() {});
+//                 } else if (state is CompanyError) {
+//                   // Show error message
+//                   CoolAlert.show(
+//                     context: context,
+//                     type: CoolAlertType.error,
+//                     text: 'خطأ',
+//                   );
+//                 } else if (state is CompanyDeletedSuccess) {
+//                   CoolAlert.show(
+//                     title: "تم الحذف",
+//                     context: context,
+//                     type: CoolAlertType.success,
+//                     text: state.message,
+//                   );
+//                   _isDisplayAllCompanyData = false;
+//                   clearAllFields();
+//                 } else if (state is CompanyUpdatedSuccess) {
+//                   CoolAlert.show(
+//                     title: "تم التعديل",
+//                     context: context,
+//                     type: CoolAlertType.success,
+//                     text: state.message,
+//                   );
+//                   _isDisplayAllCompanyData = false;
+//                   clearAllFields();
+//                   // _isShowing = !_isShowing;
 
-          fillCompanyData(state.data);
-          CoolAlert.show(
-            context: context,
-            title: "تم تحميل بيانات الشركة (${state.data.company_name}) بنجاح",
-            type: CoolAlertType.success,
-          );
-        } else if (state is CompanyFromAPISuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('تم تحميل البيانات'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 1),
-          ));
-        } else {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.error,
-            title: "حدثت مشكلة",
-            text: "!!!خطأ",
-          );
-        }
-      },
-      child: Center(
-        child: SingleChildScrollView(
-          child: BlocBuilder<CompanyCubit, CompanyState>(
-            builder: (context, state) {
-              if (state is CompanyFromAPILoading ||
-                  state is CompanyFilteringLoading) {
-                return Center(
-                    child: CircularProgressIndicator(
-                  color: MyColors.custom_yellow,
-                ));
-              } else if (state is CompanyFromAPISuccess) {
-                final List<CompanyInfoFromApi> companyList = state.company;
-                return _buildCompanyList(companyList);
-              } else if (state is CompanyError) {
-                return Center(
-                    child: Text(
-                  'مشكلة في تحميل البيانات (افحص الانترنت)',
-                  style: TextStyle(color: MyColors.custom_blue),
-                ));
-              } else if (state is CompanySearch) {
-                return _buildCompanyList(state.data);
-              }
-              if (_isSearch) {
-                companyCubit.filterCompanies();
-              }
-              return Form(
-                key: _formKey,
+//                   // toggleSearch();
+//                 } else if (state is CompanyNotFound) {
+//                   CoolAlert.show(
+//                     context: context,
+//                     type: CoolAlertType.error,
+//                     text: state.message,
+//                   );
+//                   clearAllFields();
+//                   toggleSearch();
+//                   // setState(() {});
+//                 } else if (state is DisplyingDataSuccess) {
+//                   CoolAlert.show(
+//                     context: context,
+//                     type: CoolAlertType.success,
+//                     text: state.message,
+//                   );
+//                   fillCompanyData(state.data);
+//                   _isSearch = false;
+
+//                   clearAllFields();
+//                   // toggleSearch();
+//                 } else {
+//                   CoolAlert.show(
+//                     context: context,
+//                     type: CoolAlertType.error,
+//                     title: "حدثت مشكلة",
+//                     text: "!!!خطأ",
+//                   );
+//                 }
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.only(bottom: 8.0),
+//                 color: Colors.white24.withOpacity(0.8),
+//                 child: SingleChildScrollView(
+//                   child: Form(
+//                     key: _formKey,
+//                     child: Column(
+//                       children: [
+//                         FormCompany(),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ),
+//     );
+//   }
+      body: _isSearch
+          ? Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: SafeArea(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    FormCompany(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          'بحث :  ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 14.0),
+                            child: TextField(
+                              controller: _searchController,
+                              onChanged: companyCubit.filterData,
+                              decoration: InputDecoration(
+                                  fillColor: Colors.grey.shade200,
+                                  focusColor: MyColors.custom_blue),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    Expanded(
+                      child: BlocConsumer<CompanyCubit, CompanyState>(
+                        builder: (context, state) {
+                          if (state is CompanyLoading) {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: MyColors.custom_yellow,
+                            ));
+                          } else if (state is CompanyFromAPISuccess) {
+                            final List<CompanyInfoFromApi> companyList =
+                                state.company;
+                            return _buildCompanyList(companyList);
+                          } else if (state is CompanyError) {
+                            return Center(
+                                child: Text(
+                              'مشكلة في تحميل البيانات (افحص الانترنت)',
+                              style: TextStyle(color: MyColors.custom_blue),
+                            ));
+                          } else if (state is CompanySearch) {
+                            return _buildCompanyList(state.data);
+                          }
+                          return Center();
+                        },
+                        listener: (BuildContext context, CompanyState state) {
+                          if (state is DisplayingDataSuccess) {
+                            _isSearch = false;
+                            _isDisplayAllCompanyData = true;
+                          }
+                        },
+                      ),
+                    ),
                   ],
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            )
+          : BlocListener<CompanyCubit, CompanyState>(
+              listener: (context, state) {
+                if (state is CompanyLoading) {
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.loading,
+                    text: state.message,
+                  );
+                } else if (state is CompanySuccess) {
+                  clearAllFields();
+
+                  CoolAlert.show(
+                    title: "تم الانشاء",
+                    context: context,
+                    type: CoolAlertType.success,
+                    text: state.message,
+                  );
+                } else if (state is CompanyError) {
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.error,
+                    text: 'خطأ',
+                  );
+                } else if (state is CompanyDeletedSuccess) {
+                  CoolAlert.show(
+                    title: "تم الحذف",
+                    context: context,
+                    type: CoolAlertType.success,
+                    text: state.message,
+                  );
+                  _isDisplayAllCompanyData = false;
+                  clearAllFields();
+                } else if (state is CompanyUpdatedSuccess) {
+                  CoolAlert.show(
+                    title: "تم التعديل",
+                    context: context,
+                    type: CoolAlertType.success,
+                    text: state.message,
+                  );
+                  _isDisplayAllCompanyData = false;
+                  clearAllFields();
+                } else if (state is CompanyNotFound) {
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.error,
+                    text: state.message,
+                  );
+                  clearAllFields();
+                  toggleSearch();
+                } else if (state is DisplyingDataSuccess) {
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.success,
+                    text: state.message,
+                  );
+                  fillCompanyData(state.data);
+                  _isSearch = false;
+                  clearAllFields();
+                } else {
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.error,
+                    title: "حدثت مشكلة",
+                    text: "!!!خطأ",
+                  );
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.only(bottom: 8.0),
+                color: Colors.white24.withOpacity(0.8),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        FormCompany(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
     );
   }
 
   Widget _buildCompanyList(List<CompanyInfoFromApi> companyList) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: searchTextFeild(),
-        ),
-        companyList.isEmpty
-            ? Center(
-                child: Text(
-                'لا يوجد شركات',
-                style: TextStyle(color: MyColors.custom_blue),
-              ))
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: companyList.length,
-                itemBuilder: (context, index) {
-                  int itemCount = companyList.length;
-                  int reversedIndex = itemCount - 1 - index;
-                  final data = companyList[reversedIndex];
-                  return Container(
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: MyColors.custom_light_grey,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: ListTile(
-                        onTap: () {
-                          companyCubit.fetchCompanyDetails(data.id);
-                        },
-                        leading: Text(
-                          data.id.toString(),
-                          style: TextStyle(
-                            color: MyColors.custom_blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        title: Text(
-                          data.companyName,
-                          style: TextStyle(fontSize: 14, color: Colors.black),
-                        ),
-                        trailing: Icon(
-                          Icons.business_rounded,
-                          color: MyColors.custom_yellow,
-                        )),
-                  );
-                },
-              ),
-      ],
-    );
+    return companyList.isEmpty
+        ? Center(
+            child: Text(
+            'لا يوجد شركات',
+            style: TextStyle(color: MyColors.custom_blue),
+          ))
+        : ListView.builder(
+            itemCount: companyList.length,
+            itemBuilder: (context, index) {
+              final data = companyList[index];
+              return Container(
+                margin: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: MyColors.custom_light_grey,
+                    borderRadius: BorderRadius.circular(10)),
+                child: ListTile(
+                    onTap: () {
+                      companyCubit.fetchCompanyDetails(data.id);
+                    },
+                    leading: Text(
+                      data.id.toString(),
+                      style: TextStyle(
+                        color: MyColors.custom_blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    title: Text(
+                      data.companyName,
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                    ),
+                    trailing: Icon(
+                      Icons.business_rounded,
+                      color: MyColors.custom_yellow,
+                    )),
+              );
+            },
+          );
   }
 
   Widget FormCompany() {
@@ -501,7 +583,6 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
       children: [
         CutomListTileWithTextFeild(
           // enabled: _isEditable,
-
           validator: (value) => IsTextEmpty(value),
           controllers: [
             _textControllerForCompanyNameID,
@@ -511,8 +592,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           ],
           numOfTxTf: 4,
           hintLabel: [new_id.toString(), "", "", ""],
-          labelExpanded: [1, 1, 2, 1],
-          enabled: [false, false, true, false],
+          labelExpanded: [1, 2, 1, 1],
           title: 'اسم المنشأة',
         ),
         CutomListTileWithTextFeild(
@@ -531,18 +611,6 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           title: 'وصف المسمى',
           numOfTxTf: 2,
         ),
-        CustomListTile(
-            element: CutomListTileWithdrop(
-                key: dropDwonButtonTypeIdKey,
-                validator: (value) => numberValidation(value),
-                onChanged: (dynamic newValue) {
-                  _textControllerForCompanyTypeId.text = newValue;
-                },
-                withTxt: true,
-                options: companyTypes
-                //  ['شركة تضامنية', 'شركة غير تضامنية'],
-                ),
-            title: 'صفة تسجيل المنشأة'),
         CutomListTileWithTextFeild(
           // validator: (value) =>
           //     numberGreaterThanFourValidation(value),
@@ -570,6 +638,17 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           title: ' رقم السجل التجاري',
           numOfTxTf: 1,
         ),
+        CustomListTile(
+            element: CutomListTileWithdrop(
+              key: dropDwonButtonTypeIdKey,
+              validator: (value) => numberValidation(value),
+              onChanged: (dynamic newValue) {
+                _textControllerForCompanyTypeId.text = newValue;
+              },
+              withTxt: true,
+              options: ['شركة تضامنية', 'شركة غير تضامنية'],
+            ),
+            title: 'صفة تسجيل المنشأة'),
         CustomListTile(
             element: CutomListTileWithdrop(
               key: dropDwonButtonTypeCatId,
@@ -801,7 +880,6 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                                 SnackBar(
                                   content: Text("حقل اختيار صورة مطلوب *"),
                                   backgroundColor: Colors.red,
-                                  duration: Duration(seconds: 2),
                                 ),
                               );
                             }

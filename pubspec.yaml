@@ -52,7 +52,9 @@ dependencies:
   email_validator: ^3.0.0
   freezed: 2.5.2
   freezed_annotation: ^2.4.4
-    
+  cool_alert: ^2.0.1
+  dropdown_button2: ^2.3.9
+      
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -77,7 +79,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/
+    - assets/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
