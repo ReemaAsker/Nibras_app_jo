@@ -11,7 +11,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company.dart';
 
-import 'models/CompanyType.dart';
+import 'models/CompanyRgistrationStatus.dart';
 
 part 'web_services.g.dart';
 
@@ -19,7 +19,7 @@ part 'web_services.g.dart';
 abstract class WebServices {
   factory WebServices(Dio dio, {String baseUrl}) = _WebServices;
   @GET('get-company_type')
-  Future<ApiResponse<List<CompanyType>>> getCompaniesTypes();
+  Future<ApiResponse<List<CompanyRgistrationStatus>>> getCompaniesTypes();
   @GET('get-titles')
   Future<ApiResponse<List<CompanyTitle>>> getCompaniesTitles();
   @GET('get-countries')
@@ -27,11 +27,15 @@ abstract class WebServices {
   @GET('company/get-company/')
   Future<ApiResponse<Company>> getCompanyById(
       @Query("company_id") int companyId);
+  @GET('company/get-company/')
+  // Future<ApiResponse<dynamic>> getFullAddress(@Query("area_id") int area_id);
   @DELETE('company/delete-company')
   Future<ApiResponse<bool>> deleteCompany(@Body() Map<String, int> companyData);
   @POST('company/update-company')
-  Future<ApiResponse<dynamic>> updateCompany(
-      @Body() Map<String, dynamic> companyDataToUpdate);
+  @MultiPart()
+  Future<dynamic> updateCompany(
+    @Body() Company company,
+  );
   @GET('company/get-companies')
   Future<ApiResponse<List<CompanyInfoFromApi>>> getAllCompanies();
   @POST("company/create-company")

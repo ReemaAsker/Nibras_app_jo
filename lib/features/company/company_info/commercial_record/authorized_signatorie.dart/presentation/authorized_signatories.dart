@@ -96,7 +96,7 @@ class _AuthorizedSignatoriesState extends State<AuthorizedSignatories> {
                   CutomListTileWithTextFeild(
                     numOfTxTf: 2,
                     title: 'اسم المنشأة',
-                    enabled: [false],
+                    enabled: [false, false],
                     hintLabel: ['26', 'شركة الفوسفات'],
                     controllers: [
                       _companyNameController1,
@@ -195,7 +195,7 @@ class _AuthorizedSignatoriesState extends State<AuthorizedSignatories> {
                   CustomListTile(
                     title: 'صورة للمفوض ',
                     element: ImagePickerWidget(
-                      defult_icon: Icons.person,
+                      defaultIcon: Icons.person,
                       onImagePicked: (value) {},
                     ),
                   ),
@@ -210,22 +210,24 @@ class _AuthorizedSignatoriesState extends State<AuthorizedSignatories> {
                     ),
                     title: 'تاريخ السجل التجاري',
                   ),
-                  CustomListTile(
-                    element: CutomListTileWithdrop(
-                      withTxt: true,
-                      options: ['تفويض قانوني'],
-                      onChanged: (value) {},
-                    ),
-                    title: ' انواع التفويض',
-                  ),
-                  CustomListTile(
-                    element: CutomListTileWithdrop(
-                      withTxt: true,
-                      options: ['تفويض منفرد'],
-                      onChanged: (value) {},
-                    ),
-                    title: 'صفة التفويض',
-                  ),
+                  // CustomListTile(
+                  //   element: CutomListTileWithdrop(
+                  //     withTxt: true,
+                  //     options: ['تفويض قانوني'],
+                  //     onChanged: (value) {},
+                  //     ListItem: [],
+                  //   ),
+                  //   title: ' انواع التفويض',
+                  // ),
+                  // CustomListTile(
+                  //   element: CutomListTileWithdrop(
+                  //     withTxt: true,
+                  //     options: ['تفويض منفرد'],
+                  //     onChanged: (value) {},
+                  //     ListItem: [],
+                  //   ),
+                  //   title: 'صفة التفويض',
+                  // ),
                   CutomListTileWithTextFeild(
                     title: ' نص التفويض  ',
                     numOfTxTf: 1,
@@ -248,7 +250,7 @@ class _AuthorizedSignatoriesState extends State<AuthorizedSignatories> {
                       ),
                       Expanded(
                         child: CustomListTileWithDate(
-                          forEdit: [false],
+                          forEdit: false,
                           title: '  تاريخ التحديث   ',
                         ),
                       ),

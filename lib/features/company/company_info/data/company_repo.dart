@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:nibras_group_jor/features/company/company_info/data/models/CompanyType.dart';
+import 'package:nibras_group_jor/features/company/company_info/data/models/CompanyRgistrationStatus.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/companyInfoFromApi.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company_country_national.dart';
@@ -24,10 +24,12 @@ class CompanyRepo {
     return response.data;
   }
 
-  Future<bool> updateCompany(int id, String companyName) async {
-    ApiResponse<dynamic> response = await webservices
-        .updateCompany({'company_id': id, 'company_name': companyName});
-
+  Future<bool> updateCompany(Company updatedCompany) async {
+    // ApiResponse<dynamic>
+    dynamic response = await webservices.updateCompany(updatedCompany);
+    print(response);
+    print("codeeeeeeeeeee");
+    print(response.code);
     return response.success;
   }
 
@@ -59,8 +61,8 @@ class CompanyRepo {
     }
   }
 
-  Future<List<CompanyType>> getCompanyTypes() async {
-    ApiResponse<List<CompanyType>> companies =
+  Future<List<CompanyRgistrationStatus>> getCompanyTypes() async {
+    ApiResponse<List<CompanyRgistrationStatus>> companies =
         await webservices.getCompaniesTypes();
 
     return companies.data;

@@ -57,5 +57,9 @@ class Company {
       _$CompanyFromJson(json);
 
   /// Connect the generated [_$CompanyToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$CompanyToJson(this);
+  Map<String, dynamic> toJson() => _$CompanyToJsonForCreate(this);
+
+  /// Connect the generated [_$CompanyToJson] function to the `toJson` method.
+  Map<String, dynamic> toJsonForUpdate() => _$CompanyToJsonForUpdate(this);
+  
 }

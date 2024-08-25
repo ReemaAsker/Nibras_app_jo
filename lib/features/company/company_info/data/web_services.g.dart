@@ -45,13 +45,14 @@ class _WebServices implements WebServices {
   String? baseUrl;
 
   @override
-  Future<ApiResponse<List<CompanyType>>> getCompaniesTypes() async {
+  Future<ApiResponse<List<CompanyRgistrationStatus>>>
+      getCompaniesTypes() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ApiResponse<List<CompanyType>>>(Options(
+        _setStreamType<ApiResponse<List<CompanyRgistrationStatus>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -67,12 +68,12 @@ class _WebServices implements WebServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value = ApiResponse<List<CompanyType>>.fromJson(
+    final _value = ApiResponse<List<CompanyRgistrationStatus>>.fromJson(
       _result.data!,
       (json) => json is List<dynamic>
           ? json
-              .map<CompanyType>(
-                  (i) => CompanyType.fromJson(i as Map<String, dynamic>))
+              .map<CompanyRgistrationStatus>((i) =>
+                  CompanyRgistrationStatus.fromJson(i as Map<String, dynamic>))
               .toList()
           : List.empty(),
     );
@@ -212,35 +213,61 @@ class _WebServices implements WebServices {
   }
 
   @override
-  Future<ApiResponse<dynamic>> updateCompany(
-      Map<String, dynamic> companyDataToUpdate) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(companyDataToUpdate);
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ApiResponse<dynamic>>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              'company/update-company',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = ApiResponse<dynamic>.fromJson(
-      _result.data!,
-      (json) => json as dynamic,
-    );
-    return _value;
+  Future<dynamic> updateCompany(Company company) async {
+    try {
+      final _extra = <String, dynamic>{};
+      final queryParameters = <String, dynamic>{};
+      final _headers = <String, dynamic>{};
+      // Convert company data to a Map
+      Map<String, dynamic> companyData = company.toJsonForUpdate();
+      // print("-------------------------------");
+      // print(companyData);
+      // print("-------------------------------");
+
+      // // Add image data to FormData
+      // MultipartFile? multipartFile;
+      // if (company.picture is Uint8List) {
+      //   // Handle web image data
+      //   multipartFile = MultipartFile.fromBytes(
+      //     company.picture,
+      //     filename: 'company_picture.png', // Adjust the filename as needed
+      //   );
+      // } else if (company.picture is File) {
+      //   // Handle mobile image data
+      //   multipartFile = await MultipartFile.fromFile(
+      //     company.picture.path,
+      //     filename: company.picture.path.split('/').last,
+      //   );
+      // }
+
+      // // Add image data to companyData if needed
+      // companyData['picture'] = multipartFile;
+
+      // Create FormData
+      // FormData formData = FormData.fromMap(companyData);
+      final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            'company/update-company',
+            queryParameters: queryParameters,
+            data: companyData,
+          )
+          .copyWith(
+              baseUrl: _combineBaseUrls(
+            _dio.options.baseUrl,
+            baseUrl,
+          ))));
+      final _value = _result.data;
+      return _value;
+    } catch (e) {
+      print("@@@@@@@@@@@@@");
+      print(e);
+    }
   }
 
   @override

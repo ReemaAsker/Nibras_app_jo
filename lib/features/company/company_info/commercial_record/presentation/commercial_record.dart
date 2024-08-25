@@ -87,7 +87,7 @@ class _CommercialRecordState extends State<CommercialRecord> {
                 CutomListTileWithTextFeild(
                   numOfTxTf: 2,
                   title: 'اسم المنشأة',
-                  enabled: [false],
+                  enabled: [false, false],
                   hintLabel: ['26', 'شركة الفوسفات'],
                   controllers: [
                     establishmentNameController1,

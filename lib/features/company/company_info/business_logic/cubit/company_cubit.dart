@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/company_repo.dart';
+import 'package:nibras_group_jor/features/company/company_info/data/models/company_country_national.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company_title.dart';
 
 import '../../../../../core/helper/api_Exception.dart';
-import '../../data/models/CompanyType.dart';
+import '../../data/models/CompanyRgistrationStatus.dart';
 import '../../data/models/company.dart';
 import '../../data/models/companyInfoFromApi.dart';
 import 'filterCompanies/FilterCompaniesCubit.dart';
@@ -38,23 +39,30 @@ class CompanyCubit extends Cubit<CompanyState> {
 
   // }
   Future<int> noState() async {
+    emit(NoStateLoading());
     List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
 
     int latestId =
         companies.map((company) => company.id).reduce((a, b) => a > b ? a : b);
-    List<String> companiesTypes = await getCompanyTypes();
-    emit(NoState(latestId, companiesTypes));
+    List<CompanyRgistrationStatus> companiesTypes = await getCompanyTypes();
+    List<CompanyCountryNational> companiesNationality = await getNationals();
+    List<CompanyTitle> companiesTitles = await getCompanyTitles();
+
+    emit(NoState(
+        latestId, companiesTypes, companiesNationality, companiesTitles));
 
     return latestId;
   }
 
-  Future<List<String>> getCompanyTypes() async {
-    List<CompanyType> companies = await company_Repo.getCompanyTypes();
+  Future<List<CompanyRgistrationStatus>> getCompanyTypes() async {
+    List<CompanyRgistrationStatus> companies =
+        await company_Repo.getCompanyTypes();
 
-    // Map over the list and extract the companyTypeName field
-    List<String> companyTypeNames =
-        companies.map((company) => company.compType ?? '').toList();
-    return companyTypeNames;
+    // // Map over the list and extract the companyTypeName field
+    // List<String> companyTypeNames =
+    //     companies.map((company) => company.compType ?? '').toList();
+
+    return companies;
   }
 
   Future<List<CompanyTitle>> getCompanyTitles() async {
@@ -62,11 +70,11 @@ class CompanyCubit extends Cubit<CompanyState> {
     return companies;
   }
 
-  // Future<List<CompanyTitle>> getNationals() async {
-  //   List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
+  Future<List<CompanyCountryNational>> getNationals() async {
+    List<CompanyCountryNational> companies = await company_Repo.getCountries();
 
-  //   return companyTypeNames;
-  // }
+    return companies;
+  }
   // Future<int> GetCompanyTitles() async {
   //   List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
 
@@ -118,12 +126,16 @@ class CompanyCubit extends Cubit<CompanyState> {
     }
   }
 
-  Future<void> UpdateCompany(int id, String companyName) async {
+  Future<void> UpdateCompany(Company company) async {
     try {
-      // emit(CompanyLoading("يتم التحميل..."));
-      bool response = await company_Repo.updateCompany(id, companyName);
+      emit(CompanyLoading("يتم التحميل..."));
+      bool response = await company_Repo.updateCompany(company);
       emit(CompanyUpdatedSuccess(response, 'تمت عملية تعديل المنشأة بنجاح !'));
-    } catch (e) {
+    } catch (e, str) {
+      print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%UpdateCompany cubit%%%%%%%%%%");
+      print(e);
+      print(str);
+
       emit(CompanyError(e.toString()));
     }
   }

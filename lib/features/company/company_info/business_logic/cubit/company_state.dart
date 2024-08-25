@@ -92,6 +92,13 @@ class DisplayingDataSuccess extends CompanyState {
 
 class NoState extends CompanyState {
   final int lastId;
-  final List<String> types;
-  NoState(this.lastId, this.types);
+  final List<CompanyRgistrationStatus> companyRgistrationStatus;
+  final List<CompanyCountryNational> nationalites;
+  final List<CompanyTitle> CompanyTitles;
+  NoState(this.lastId, this.companyRgistrationStatus, this.nationalites,
+      this.CompanyTitles);
+}
+
+class NoStateLoading extends CompanyState {
+  NoStateLoading();
 }

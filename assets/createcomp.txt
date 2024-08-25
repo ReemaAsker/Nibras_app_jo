@@ -48,3 +48,198 @@
     final _value = _result.data;
     return _value;
   }
+//////////////////////
+import 'package:json_annotation/json_annotation.dart';
+
+part 'company.g.dart';
+
+@JsonSerializable()
+class Company {
+  int? id;
+  final String? company_name; //اسم الشركة
+  final String? company_trademark; //العلامة التجارية
+  final int? company_title_id; // وصف المسمى
+  final int? company_country_id; //الجنسية
+  final int? company_type_id; //صفة تسجيل المنشأة
+  final int? company_cat_id; //نوع المنشأة
+  final String? national_id; // الرقم الوطني
+  final String? registration_number; // رقم تسجيل المنشأة
+  String? phone;
+  String? mobile;
+  String? email;
+  String? notes;
+  int? a_address;
+  String? address_desc;
+  dynamic picture;
+  dynamic created_by;
+  dynamic updated_by;
+  dynamic deleted_by;
+  dynamic deleted_at;
+  String? created_at;
+  String? updated_at;
+  Company({
+    this.id,
+    required this.picture,
+    required this.company_name,
+    required this.company_trademark,
+    required this.company_title_id,
+    required this.company_country_id,
+    required this.company_type_id,
+    required this.company_cat_id,
+    required this.national_id,
+    required this.registration_number,
+    required this.phone,
+    required this.mobile,
+    required this.email,
+    this.notes,
+    required this.a_address,
+    this.created_by,
+    this.updated_by,
+    required this.address_desc,
+    this.deleted_by,
+    this.deleted_at,
+    this.created_at,
+    this.updated_at,
+  });
+
+  /// Connect the generated [_$CompanyFromJson] function to the `fromJson`
+  /// factory.
+  factory Company.fromJson(Map<String, dynamic> json) =>
+      _$CompanyFromJson(json);
+
+  /// Connect the generated [_$CompanyToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$CompanyToJsonForCreate(this);
+
+  /// Connect the generated [_$CompanyToJson] function to the `toJson` method.
+  Map<String, dynamic> toJsonForUpdate() => _$CompanyToJsonForUpdate(this);
+}
+
+/////////////////////////////////
+generate://////////////
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'company.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Company _$CompanyFromJson(Map<String, dynamic> json) => Company(
+      id: (json['id'] as num?)?.toInt(),
+      picture: json['picture'],
+      company_name: json['company_name'] as String?,
+      company_trademark: json['company_trademark'] as String?,
+      company_title_id: (json['company_title_id'] as num?)?.toInt(),
+      company_country_id: (json['company_country_id'] as num?)?.toInt(),
+      company_type_id: (json['company_type_id'] as num?)?.toInt(),
+      company_cat_id: (json['company_cat_id'] as num?)?.toInt(),
+      national_id: json['national_id'] as String?,
+      registration_number: json['registration_number'] as String?,
+      phone: json['phone'] as String?,
+      mobile: json['mobile'] as String?,
+      email: json['email'] as String?,
+      notes: json['notes'] as String?,
+      a_address: (json['a_address'] as num?)?.toInt(),
+      created_by: json['created_by'],
+      updated_by: json['updated_by'],
+      address_desc: json['address_desc'] as String?,
+      deleted_by: json['deleted_by'],
+      deleted_at: json['deleted_at'],
+      created_at: json['created_at'] as String?,
+      updated_at: json['updated_at'] as String?,
+    );
+
+Map<String, dynamic> _$CompanyToJsonForUpdate(Company instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'company_name': instance.company_name,
+      'company_trademark': instance.company_trademark,
+      'company_title_id': instance.company_title_id,
+      'company_country_id': instance.company_country_id,
+      'company_type_id': instance.company_type_id,
+      'company_cat_id': instance.company_cat_id,
+      'national_id': instance.national_id,
+      'registration_number': instance.registration_number,
+      'phone': instance.phone,
+      'mobile': instance.mobile,
+      'email': instance.email,
+      'notes': instance.notes,
+      'a_address': instance.a_address,
+      'address_desc': instance.address_desc,
+      'picture': instance.picture,
+    };
+
+Map<String, dynamic> _$CompanyToJsonForCreate(Company instance) =>
+    <String, dynamic>{
+      'company_name': instance.company_name,
+      'company_trademark': instance.company_trademark,
+      'company_title_id': instance.company_title_id,
+      'company_country_id': instance.company_country_id,
+      'company_type_id': instance.company_type_id,
+      'company_cat_id': instance.company_cat_id,
+      'national_id': instance.national_id,
+      'registration_number': instance.registration_number,
+      'phone': instance.phone,
+      'mobile': instance.mobile,
+      'email': instance.email,
+      'notes': instance.notes,
+      'a_address': instance.a_address,
+      'address_desc': instance.address_desc,
+      'picture': instance.picture,
+    };
+/////////////////////////////
+
+  @override
+  Future<dynamic> updateCompany(Company company) async {
+    try {
+      final _extra = <String, dynamic>{};
+      final queryParameters = <String, dynamic>{};
+      final _headers = <String, dynamic>{};
+      // Convert company data to a Map
+      Map<String, dynamic> companyData = company.toJsonForUpdate();
+
+      // Add image data to FormData
+      MultipartFile? multipartFile;
+      if (company.picture is Uint8List) {
+        // Handle web image data
+        multipartFile = MultipartFile.fromBytes(
+          company.picture,
+          filename: 'company_picture.png', // Adjust the filename as needed
+        );
+      } else if (company.picture is File) {
+        // Handle mobile image data
+        multipartFile = await MultipartFile.fromFile(
+          company.picture.path,
+          filename: company.picture.path.split('/').last,
+        );
+      }
+
+      // Add image data to companyData if needed
+      companyData['picture'] = multipartFile;
+
+      // Create FormData
+      FormData formData = FormData.fromMap(companyData);
+      final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'multipart/form-data',
+      )
+          .compose(
+            _dio.options,
+            'company/update-company',
+            queryParameters: queryParameters,
+            data: formData,
+          )
+          .copyWith(
+              baseUrl: _combineBaseUrls(
+            _dio.options.baseUrl,
+            baseUrl,
+          ))));
+      final _value = _result.data;
+      return _value;
+    } catch (e) {
+      print("@@@@@@@@@@@@@");
+      print(e);
+    }
+  }

@@ -111,13 +111,14 @@ class _PersonDefinationState extends State<PersonsDefination> {
                   _delegateNameController3,
                 ],
               ),
-              CustomListTile(
-                  element: CutomListTileWithdrop(
-                    options: ['عزباء/اعزب ', 'متزوج/ة', 'مطلق/مطلقة', 'ارمل/ة'],
-                    withTxt: false,
-                    onChanged: (value) {},
-                  ),
-                  title: 'الحالة الاجتماعية '),
+              // CustomListTile(
+              //     element: CutomListTileWithdrop(
+              //       options: ['عزباء/اعزب ', 'متزوج/ة', 'مطلق/مطلقة', 'ارمل/ة'],
+              //       withTxt: false,
+              //       onChanged: (value) {},
+              //       ListItem: [],
+              //     ),
+              //     title: 'الحالة الاجتماعية '),
               CustomListTile(
                   element: Padding(
                     padding: const EdgeInsets.all(10.0),

@@ -31,7 +31,8 @@ Company _$CompanyFromJson(Map<String, dynamic> json) => Company(
       updated_at: json['updated_at'] as String?,
     );
 
-Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
+Map<String, dynamic> _$CompanyToJsonForUpdate(Company instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'company_name': instance.company_name,
       'company_trademark': instance.company_trademark,
@@ -49,9 +50,24 @@ Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
       'address_desc': instance.address_desc,
       'picture': instance.picture,
       'created_by': instance.created_by,
-      'updated_by': instance.updated_by,
-      'deleted_by': instance.deleted_by,
-      'deleted_at': instance.deleted_at,
       'created_at': instance.created_at,
-      'updated_at': instance.updated_at,
+    };
+
+Map<String, dynamic> _$CompanyToJsonForCreate(Company instance) =>
+    <String, dynamic>{
+      'company_name': instance.company_name,
+      'company_trademark': instance.company_trademark,
+      'company_title_id': instance.company_title_id,
+      'company_country_id': instance.company_country_id,
+      'company_type_id': instance.company_type_id,
+      'company_cat_id': instance.company_cat_id,
+      'national_id': instance.national_id,
+      'registration_number': instance.registration_number,
+      'phone': instance.phone,
+      'mobile': instance.mobile,
+      'email': instance.email,
+      'notes': instance.notes,
+      'a_address': instance.a_address,
+      'address_desc': instance.address_desc,
+      'picture': instance.picture,
     };
