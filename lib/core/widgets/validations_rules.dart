@@ -24,11 +24,6 @@ String? passwordValidation(String? value) {
   return null;
 }
 
-// Checks if the value is empty or null
-bool emptyNullValidation(String? value) {
-  return value == null || value.isEmpty;
-}
-
 // Number validation function
 String? numberValidation(String? value) {
   if (value == null || value.isEmpty) {
@@ -86,6 +81,11 @@ String? IsTextEmpty(String? value) {
   } else {
     return null;
   }
+}
+
+// Checks if the value is empty or null
+bool emptyNullValidation(String? value) {
+  return value == null || value.isEmpty;
 }
 
 String? validateDropdown(String? value) {

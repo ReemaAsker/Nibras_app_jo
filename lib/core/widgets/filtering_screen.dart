@@ -83,9 +83,10 @@ class _FilteringScreenState extends State<FilteringScreen> {
               } else if (state is CompanySearch) {
                 return showCompanies(state.data);
               } else if (state is! DisplyingDataSuccess &&
-                  state is! CompanyDeletedSuccess &&
-                  state is! CompanyUpdatedSuccess &&
-                  state is! CompanyNotFound) {
+                      state is! CompanyDeletedSuccess &&
+                      state is! CompanyUpdatedSuccess
+                  // state is! CompanyNotFound
+                  ) {
                 // Future.microtask(() {
                 //   Navigator.of(context)
                 //       .pushReplacementNamed(firstCompanyInfo ,);

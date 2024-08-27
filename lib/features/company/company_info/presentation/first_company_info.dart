@@ -31,14 +31,7 @@ class FirstCompnayInfo extends StatefulWidget {
 
 class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   CompanyCubit companyCubit = GetIt.instance<CompanyCubit>();
-  GlobalKey<ImagePickerState> imagePickerKey = GlobalKey<ImagePickerState>();
-  // GlobalKey<CutomListTileState> dropDwonButtonTypeIdKey =
-  //     GlobalKey<CutomListTileState>();
-  // GlobalKey<CutomListTileState> dropDwonButtonTypeCatId =
-  //     GlobalKey<CutomListTileState>();
-  // GlobalKey<CutomListTileState> dropDwonButtonTypeCountryID =
-  //     GlobalKey<CutomListTileState>();
-
+  String selectedCompanyTitleId = "";
   late Company companyDetail;
   final TextEditingController _textControllerForCompanyNameID =
       TextEditingController();
@@ -87,6 +80,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   final TextEditingController _searchController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey(); // Global key for the form
+  final GlobalKey<CustomListTileWithDropState> customListTileWithDropKey =
+      GlobalKey<CustomListTileWithDropState>();
+
   late dynamic _selectedImage = Icons.home;
   late int selectedId;
   bool _isSearch = false;
@@ -100,10 +96,12 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     CompanyType(id: 1, type: "منشأة خاصة"),
     CompanyType(id: 2, type: "منشأة حكومية")
   ];
+  late String created_at;
+  late String updated_at;
 
   @override
   void initState() {
-    companyCubit.noState();
+    companyCubit.noState().then((value) => new_id = value + 1);
 
     super.initState();
   }
@@ -135,10 +133,16 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   }
 
   void toggleSearch() {
-    setState(() {
-      _isSearch = !_isSearch;
-      _isDisplayAllCompanyData = false;
-    });
+    try {
+      setState(() {
+        _isSearch = !_isSearch;
+        _isDisplayAllCompanyData = false;
+      });
+    } catch (e, tt) {
+      print("!!!!!!!!!!!!!!!!!");
+      print(e);
+      print(tt);
+    }
   }
 
   void _onImagePicked(dynamic image) {
@@ -163,8 +167,45 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
       ),
     );
   }
+//  String input = "(Eng.)Ahmd Ali(okok)";
+//
+// }
+
+  Map<String, String> splitText(String input) {
+    // Define the regular expressions to extract the required parts
+    final RegExp prefixRegex = RegExp(r'\(([^)]+)\)');
+    final RegExp suffixRegex = RegExp(r'\(([^)]+)\)$');
+
+    // Extract the first part from parentheses
+    String first = '';
+    final firstMatch = prefixRegex.firstMatch(input);
+    if (firstMatch != null) {
+      first = firstMatch.group(1)!.trim();
+    }
+
+    // Extract the suffix part from parentheses at the end
+    String suffix = '';
+    final suffixMatch = suffixRegex.firstMatch(input);
+    if (suffixMatch != null) {
+      suffix = suffixMatch.group(1)!.trim();
+    }
+
+    // Extract the name part (the remaining text between the parentheses)
+    String ComName =
+        input.replaceAll(prefixRegex, '').replaceAll(suffixRegex, '').trim();
+
+    return {
+      'prefix': first,
+      'ComName': ComName,
+      'suffix': suffix,
+    };
+  }
 
   fillCompanyData(Company existingCompany) {
+    // print("datee");
+    // print(existingCompany.created_at.runtimeType);
+    // print(existingCompany.updated_at.runtimeType);
+
     //existingCompany
     // Set the text field controllers with the corresponding data
     try {
@@ -172,14 +213,20 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           existingCompany.id.toString().isEmpty
               ? ""
               : existingCompany.id.toString();
-      List<String> companyName = existingCompany.company_name!.split(" ");
-      if (companyName.length == 3) {
+
+      Map<String, String> splitting = splitText(existingCompany.company_name!);
+      print(splitText(existingCompany.company_name!));
+//   print('First: ${result['first']}'); // Output: Eng
+//   print('Name: ${result['name']}');   // Output: Ahmd Ali
+//   print('Suffix: ${result['suffix']}'); // Output: okok
+      print(splitting["prefix"]!);
+      if (splitting.length == 3) {
         _textControllerForCompanyName.text =
-            companyName[1].isEmpty ? "" : companyName[1];
+            splitting["ComName"]!.isEmpty ? "" : splitting["ComName"]!;
         _textControllerForCompanyNamePrefix.text =
-            companyName[0].isEmpty ? "1" : companyName[0];
+            splitting["prefix"]!.isEmpty ? "" : splitting["prefix"]!;
         _textControllerForCompanyNameSuffix.text =
-            companyName[2].isEmpty ? "1" : companyName[2];
+            splitting["suffix"]!.isEmpty ? "" : splitting["suffix"]!;
       } else {
         _textControllerForCompanyName.text = "";
         _textControllerForCompanyNamePrefix.text = "";
@@ -193,8 +240,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
       // _textControllerForCompanyNameDescriptionFeildTwo.text =
       //     existingCompany.companyNameDescription2 ?? '';
 
-      // _textControllerForCompanyNationalID.text =
-      //     existingCompany.national_id ?? '';
+      _textControllerForCompanyNationalId.text =
+          existingCompany.national_id ?? '';
       _textControllerForCompanyRegisteration_Number.text =
           existingCompany.registration_number ?? '';
       // _textControllerForCompanyCommercialNumber.text =
@@ -216,6 +263,12 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           existingCompany.address_desc ?? '';
       _textControllerForCompanyNotes.text = existingCompany.notes ?? '';
       _selectedImage = existingCompany.picture ?? Icons.home;
+
+      created_at = existingCompany.created_at.toString();
+      updated_at = existingCompany.created_at.toString();
+      // If you are using a CustomListTileWithDrop for Company Title, you can pass the ID
+      // setState(() {
+      // });
     } catch (e, str) {
       print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2");
       print(e);
@@ -227,8 +280,50 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     });
   }
 
+  // void clearAllFields() {
+  //   _textControllerForCompanyNameID.clear();
+  //   _textControllerForCompanyDesc.clear();
+  //   _textControllerForTradeMark.clear();
+  //   _textControllerForCompanyTitleId.clear();
+  //   _textControllerForCompanyNamePrefix.clear();
+  //   _textControllerForCompanyNameSuffix.clear();
+  //   _textControllerForCompanyName.clear();
+  //   _textControllerForCompanyCountryID.clear();
+  //   _textControllerForCompanyRegisteration_Number.clear();
+  //   _textControllerForCompanyCommercialNumber.clear();
+  //   _textControllerForCompanyTypeId.clear();
+  //   _textControllerForCompanyCatId.clear();
+  //   _textControllerForCompanyNationalId.clear();
+  //   _textControllerForCompanyMobileNumber.clear();
+  //   _textControllerForCompanyTelephoneNumber.clear();
+  //   _textControllerForCompanyFaxNumber.clear();
+  //   _textControllerForCompanyEmail.clear();
+  //   _textControllerForCompanyAddressOne.clear();
+  //   _textControllerForCompanyAddressTwo.clear();
+  //   _textControllerForCompanyNotes.clear();
+  //   imagePickerKey = GlobalKey<ImagePickerState>();
+  //   companyTypeKey = GlobalKey<CustomListTileWithDropState<CompanyType>>();
+
+  //   companyTitleKey = GlobalKey<CustomListTileWithDropState<CompanyTitle>>();
+  //   companyRgistrationStatusKey =
+  //       GlobalKey<CustomListTileWithDropState<CompanyRgistrationStatus>>();
+  //   countryNationalKey =
+  //       GlobalKey<CustomListTileWithDropState<CompanyCountryNational>>();
+  //   // dropDwonButtonTypeIdKey = GlobalKey<CutomListTileState>();
+  //   // dropDwonButtonTypeCatId = GlobalKey<CutomListTileState>();
+  //   // dropDwonButtonTypeCountryID = GlobalKey<CutomListTileState>();
+
+  //   _textControllerForCompanyTypeId.clear();
+  //   _searchController.clear();
+  //   _textControllerForCompanyCatId.text = "";
+  //   _textControllerForCompanyTypeId.text = "";
+  //   _textControllerForCompanyCountryID.text = "";
+  //   _selectedImage = null;
+  //   setState(() {});
+  // }
   void clearAllFields() {
-    _textControllerForCompanyNameID.clear();
+    // Clear all text controllers
+    _textControllerForCompanyNameID.text = new_id.toString();
     _textControllerForCompanyDesc.clear();
     _textControllerForTradeMark.clear();
     _textControllerForCompanyTitleId.clear();
@@ -245,20 +340,16 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     _textControllerForCompanyTelephoneNumber.clear();
     _textControllerForCompanyFaxNumber.clear();
     _textControllerForCompanyEmail.clear();
-    _textControllerForCompanyAddressOne.clear();
-    _textControllerForCompanyAddressTwo.clear();
+    // _textControllerForCompanyAddressOne.clear();
+    // _textControllerForCompanyAddressTwo.clear();
     _textControllerForCompanyNotes.clear();
-    imagePickerKey = GlobalKey<ImagePickerState>();
-    // dropDwonButtonTypeIdKey = GlobalKey<CutomListTileState>();
-    // dropDwonButtonTypeCatId = GlobalKey<CutomListTileState>();
-    // dropDwonButtonTypeCountryID = GlobalKey<CutomListTileState>();
 
-    _textControllerForCompanyTypeId.clear();
+    // Clear the search controller
     _searchController.clear();
-    _textControllerForCompanyCatId.text = "";
-    _textControllerForCompanyTypeId.text = "";
-    _textControllerForCompanyCountryID.text = "";
+
+    // Reset image and other fields
     _selectedImage = null;
+
     setState(() {});
   }
 
@@ -300,9 +391,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                   child: IconButton(
                       onPressed: () {
                         _isDisplayAllCompanyData = false;
-
-                        clearAllFields();
-                        // setState(() {});
+                        companyCubit.noState();
                       },
                       icon: Icon(
                         Icons.add_circle_rounded,
@@ -338,14 +427,13 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             text: state.message,
           );
         } else if (state is CompanySuccess) {
-          clearAllFields();
-
           CoolAlert.show(
             title: "تم الانشاء",
             context: context,
             type: CoolAlertType.success,
             text: state.message,
           );
+          companyCubit.noState();
         } else if (state is CompanyError) {
           CoolAlert.show(
             context: context,
@@ -361,7 +449,6 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             text: state.message,
           );
           _isDisplayAllCompanyData = false;
-          clearAllFields();
           companyCubit.noState();
         } else if (state is CompanyUpdatedSuccess) {
           CoolAlert.show(
@@ -371,18 +458,19 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             text: state.message,
           );
           _isDisplayAllCompanyData = true;
-          clearAllFields();
+          // clearAllFields();
           companyCubit.noState();
           // companyCubit.noState();
-        } else if (state is CompanyNotFound) {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.error,
-            text: state.message,
-          );
-          clearAllFields();
-          toggleSearch();
         }
+        // else if (state is CompanyNotFound) {
+        //   CoolAlert.show(
+        //     context: context,
+        //     type: CoolAlertType.error,
+        //     text: state.message,
+        //   );
+        //   clearAllFields();
+        //   toggleSearch();
+        // }
         //else if (state is DisplyingDataSuccess) {
         //   CoolAlert.show(
         //     context: context,
@@ -396,6 +484,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           _isSearch = false;
           _isDisplayAllCompanyData = true;
           selectedId = state.data.id!;
+
           fillCompanyData(state.data);
           CoolAlert.show(
             context: context,
@@ -426,8 +515,16 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                   state is CompanyFilteringLoading ||
                   state is NoStateLoading) {
                 return Center(
-                    child: CircularProgressIndicator(
-                  color: MyColors.custom_yellow,
+                    child: Column(
+                  children: [
+                    CircularProgressIndicator(
+                      color: MyColors.custom_yellow,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text("جاري التحميل ..")
+                  ],
                 ));
               } else if (state is CompanyFromAPISuccess) {
                 final List<CompanyInfoFromApi> companyList = state.company;
@@ -506,7 +603,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                           ),
                         ),
                         title: Text(
-                          data.companyName,
+                          splitText(data.companyName)["ComName"]!,
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                         trailing: Icon(
@@ -525,8 +622,11 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
       children: [
         CutomListTileWithTextFeild(
           // enabled: _isEditable,
-
-          validator: (value) => IsTextEmpty(value),
+          validator: (value) {
+            if (_textControllerForCompanyNameSuffix.text.isEmpty) {
+            } else
+              IsTextEmpty(value);
+          },
           controllers: [
             _textControllerForCompanyNameID,
             _textControllerForCompanyNamePrefix,
@@ -534,7 +634,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             _textControllerForCompanyNameSuffix,
           ],
           numOfTxTf: 4,
-          hintLabel: [nId.toString(), "", "", ""],
+          hintLabel: [new_id.toString(), "", "", ""],
           labelExpanded: [1, 1, 2, 1],
           enabled: [false, false, true, false],
           title: 'اسم المنشأة',
@@ -547,23 +647,46 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             title: ' العلامة التجارية',
             numOfTxTf: 1),
         CustomListTile(
-            element: CustomListTileWithDrop<CompanyTitle>(
-              items: companyTitles,
-              itemFieldExtractor: (item) =>
-                  (item as CompanyTitle).titlePrefix ?? '',
-              itemFieldExtractorSuffix: (item) =>
-                  (item as CompanyTitle).titleSuffix ?? '',
-              idExtractor: (item) => (item as CompanyTitle).id.toString(),
-              onChanged: (selectedItem) {
-                _textControllerForCompanyTitleId.text =
-                    (selectedItem as CompanyTitle).id.toString();
-                _textControllerForCompanyNamePrefix.text =
-                    (selectedItem as CompanyTitle).titlePrefix.toString();
-                _textControllerForCompanyNameSuffix.text =
-                    (selectedItem as CompanyTitle).titleSuffix.toString();
-              },
-            ),
-            title: 'وصف المسمى'),
+          element: CustomListTileWithDrop<CompanyTitle>(
+            key: customListTileWithDropKey,
+            items: companyTitles,
+            itemFieldExtractor: (item) =>
+                (item as CompanyTitle).titlePrefix ?? '',
+            itemFieldExtractorSuffix: (item) =>
+                (item as CompanyTitle).titleSuffix ?? '',
+            idExtractor: (item) => (item as CompanyTitle).id.toString(),
+            onChanged: (selectedItem) {
+              _textControllerForCompanyTitleId.text =
+                  (selectedItem as CompanyTitle).id.toString();
+              _textControllerForCompanyNamePrefix.text =
+                  selectedItem.titlePrefix.toString();
+              _textControllerForCompanyNameSuffix.text =
+                  selectedItem.titleSuffix.toString();
+            },
+          ),
+          title: 'وصف المسمى',
+        ),
+        // CustomListTile(
+        //     element: CustomListTileWithDrop<CompanyTitle>(
+        //       key: customListTileWithDropKey,
+        //       items: companyTitles,
+        //       itemFieldExtractor: (item) =>
+        //           (item as CompanyTitle).titlePrefix ?? '',
+        //       itemFieldExtractorSuffix: (item) =>
+        //           (item as CompanyTitle).titleSuffix ?? '',
+        //       idExtractor: (item) => (item as CompanyTitle).id.toString(),
+        //       onChanged: (selectedItem) {
+        //         _textControllerForCompanyTitleId.text =
+        //             (selectedItem as CompanyTitle).id.toString();
+        //         _textControllerForCompanyNamePrefix.text =
+        //             (selectedItem as CompanyTitle).titlePrefix.toString();
+        //         _textControllerForCompanyNameSuffix.text =
+        //             (selectedItem as CompanyTitle).titleSuffix.toString();
+        //       },
+        //         initialId: selectedCompanyTitleId, // Pass the ID here
+
+        //     ),
+        //     title: 'وصف المسمى'),
         CustomListTile(
             element: CustomListTileWithDrop<CompanyRgistrationStatus>(
               items: companyRgistrationStatus, // List of CompanyType objects
@@ -688,30 +811,35 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
         CustomListTile(
           title: 'صورة لشعار المنشأة',
           element: ImagePickerWidget(
-            key: imagePickerKey,
-            defaultIcon: _selectedImage,
+            defaultIcon: _selectedImage ?? Icons.home,
             onImagePicked: _onImagePicked,
           ),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: CustomListTileWithDate(
-                forEdit: false,
-                title: '  تاريخ السجل   ',
-              ),
-            ),
-            Expanded(
-              child: CustomListTileWithDate(
-                forEdit: false,
-                title: '  تاريخ التحديث   ',
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
+        _isDisplayAllCompanyData
+            ? Center(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomListTileWithDate(
+                        forEdit: false,
+                        title: '  تاريخ السجل   ',
+                        initialDateTime: updated_at,
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomListTileWithDate(
+                        forEdit: false,
+                        title: '  تاريخ التحديث   ',
+                        initialDateTime: updated_at,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+              )
+            : Text(''),
         Divider(
           thickness: 3,
           color: MyColors.custom_dark_grey,
@@ -827,6 +955,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                               vertical: 12.0), // Adjust padding
                         ),
                         onPressed: () {
+                          if (_textControllerForCompanyNameID.text.isEmpty)
+                            _textControllerForCompanyNameID.text = "";
                           if (_formKey.currentState!.validate()) {
                             companyCubit.createCompany(createCompany());
                           }
@@ -843,20 +973,13 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
 
   Company createCompany() {
     late Company newCompany;
-    print("################");
-    print(_textControllerForCompanyNameID.text);
-    print(_textControllerForCompanyTitleId.text);
-    print(_textControllerForCompanyCountryID.text);
-    print(_textControllerForCompanyTypeId.text);
-    print(_textControllerForCompanyCatId.text);
-    print(_textControllerForCompanyAddressOne.text);
 
     // uploadFile(_selectedImage);
     try {
       newCompany = Company(
         id: int.parse(_textControllerForCompanyNameID.text),
         company_name:
-            '${_textControllerForCompanyNamePrefix.text.isEmpty ? "" : _textControllerForCompanyNamePrefix.text} ${_textControllerForCompanyName.text.isEmpty ? "" : _textControllerForCompanyName.text} ${_textControllerForCompanyNameSuffix.text.isEmpty ? "" : _textControllerForCompanyNameSuffix.text}',
+            '(${_textControllerForCompanyNamePrefix.text.isEmpty ? "" : _textControllerForCompanyNamePrefix.text}) ${_textControllerForCompanyName.text.isEmpty ? "" : _textControllerForCompanyName.text} (${_textControllerForCompanyNameSuffix.text.isEmpty ? "" : _textControllerForCompanyNameSuffix.text})',
         company_trademark: _textControllerForTradeMark.text,
         company_title_id: int.parse(_textControllerForCompanyTitleId.text),
         company_country_id:

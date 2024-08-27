@@ -464,14 +464,14 @@ class ImagePickerState extends State<ImagePickerWidget> {
                   SizedBox(width: 8),
                   CircleAvatar(
                     radius: 30,
-                    backgroundColor: Colors.grey[300],
+                    // backgroundColor: Colors.grey[300],
                     backgroundImage: imageProvider,
                     child: _image == null
                         ? widget.defaultIcon is IconData
                             ? Icon(
                                 widget.defaultIcon,
                                 size: 30,
-                                color: Colors.grey[600],
+                                color: Colors.black,
                               )
                             : widget.defaultIcon is String
                                 ? ClipOval(

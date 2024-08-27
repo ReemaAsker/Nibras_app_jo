@@ -118,9 +118,10 @@ class CompanyCubit extends Cubit<CompanyState> {
       bool response = await company_Repo.deleteCompany(id);
       if (response) {
         emit(CompanyDeletedSuccess(response, 'تمت عملية حذف المنشأة بنجاح !'));
-      } else {
-        emit(CompanyNotFound('!الشركة المراد حذفها غير موجودة'));
-      }
+      } 
+      // else {
+        // emit(CompanyNotFound('!الشركة المراد حذفها غير موجودة'));
+      // }
     } catch (e) {
       emit(CompanyError(e.toString()));
     }

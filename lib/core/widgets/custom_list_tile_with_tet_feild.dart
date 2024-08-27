@@ -96,7 +96,6 @@ class CutomListTileWithTextFeild extends StatefulWidget {
   final List<int>? labelExpanded;
   final List<TextEditingController>? controllers;
   final String? Function(String?)? validator;
-
   CutomListTileWithTextFeild({
     Key? key,
     required this.title,
