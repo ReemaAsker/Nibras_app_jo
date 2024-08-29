@@ -1,0 +1,134 @@
+
+  @override
+  Future<ApiResponse<dynamic>> updateCompany(Company company) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+
+    // Convert company data to a Map
+    Map<String, dynamic> companyData = company.toJson();
+
+    // Add image data to FormData
+    MultipartFile? multipartFile;
+
+    if (company.picture is Uint8List) {
+      // If the picture is Uint8List, directly convert to MultipartFile
+      multipartFile = MultipartFile.fromBytes(
+        company.picture,
+        filename: 'company_picture.png', // Adjust the filename as needed
+      );
+    } else if (company.picture is String) {
+      // If the picture is a URL (String), download the image data
+      String imageUrl = company.picture;
+
+      if (imageUrl.startsWith('http') || imageUrl.startsWith('https')) {
+        try {
+          // Download the image data as bytes using Dio
+          final response = await _dio.get<List<int>>(
+            imageUrl,
+            options: Options(responseType: ResponseType.bytes),
+          );
+
+          // Convert the downloaded image data to Uint8List
+          Uint8List imageBytes = Uint8List.fromList(response.data!);
+
+          // Convert the image data to MultipartFile
+          multipartFile = MultipartFile.fromBytes(
+            imageBytes,
+            filename: imageUrl.split('/').last, // Extract filename from URL
+          );
+        } catch (e) {
+          print('Failed to download image: $e');
+          throw Exception('فشل تحميل الصورة!');
+        }
+      }
+    } else if (company.picture is File) {
+      // Handle mobile image data
+      multipartFile = await MultipartFile.fromFile(
+        company.picture.path,
+        filename: company.picture.path.split('/').last,
+      );
+    }
+
+    // Add image data to companyData if needed
+    if (multipartFile != null) {
+      companyData['picture'] = multipartFile;
+    }
+
+    // Create FormData
+    FormData formData = FormData.fromMap(companyData);
+
+    final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          'company/update-company',
+          queryParameters: queryParameters,
+          data: formData,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+
+    final _value = ApiResponse<dynamic>.fromJson(
+      _result.data!,
+      (json) => json as dynamic,
+    );
+
+    return _value;
+  }
+
+  @override
+  Future<dynamic> createCompany(Company company) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    // Convert company data to a Map
+    Map<String, dynamic> companyData = company.toCreateJson();
+    // Add image data to FormData
+    MultipartFile? multipartFile;
+    if (company.picture is Uint8List) {
+      // Handle web image data
+      multipartFile = MultipartFile.fromBytes(
+        company.picture,
+        filename: 'company_picture.png', // Adjust the filename as needed
+      );
+    } else if (company.picture is File) {
+      // Handle mobile image data
+      multipartFile = await MultipartFile.fromFile(
+        company.picture.path,
+        filename: company.picture.path.split('/').last,
+      );
+    }
+
+    // Add image data to companyData if needed
+    companyData['picture'] = multipartFile;
+
+    // Create FormData
+    FormData formData = FormData.fromMap(companyData);
+    final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          'company/create-company',
+          queryParameters: queryParameters,
+          data: formData,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+    final _value = _result.data;
+    return _value;
+  }

@@ -27,9 +27,8 @@ class CompanyRepo {
   Future<bool> updateCompany(Company updatedCompany) async {
     // ApiResponse<dynamic>
     dynamic response = await webservices.updateCompany(updatedCompany);
-    print(response);
-    print("codeeeeeeeeeee");
-    print(response.code);
+    // print(response);
+    // print(response.code);
     return response.success;
   }
 

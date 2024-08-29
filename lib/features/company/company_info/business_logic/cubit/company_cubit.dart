@@ -120,7 +120,7 @@ class CompanyCubit extends Cubit<CompanyState> {
         emit(CompanyDeletedSuccess(response, 'تمت عملية حذف المنشأة بنجاح !'));
       } 
       // else {
-        // emit(CompanyNotFound('!الشركة المراد حذفها غير موجودة'));
+      //   emit(CompanyNotFound('!الشركة المراد حذفها غير موجودة'));
       // }
     } catch (e) {
       emit(CompanyError(e.toString()));

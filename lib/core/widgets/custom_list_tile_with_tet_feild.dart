@@ -96,6 +96,7 @@ class CutomListTileWithTextFeild extends StatefulWidget {
   final List<int>? labelExpanded;
   final List<TextEditingController>? controllers;
   final String? Function(String?)? validator;
+  int? ignoreValidatorIndex;
   CutomListTileWithTextFeild({
     Key? key,
     required this.title,
@@ -107,6 +108,7 @@ class CutomListTileWithTextFeild extends StatefulWidget {
     this.labelExpanded,
     this.controllers,
     this.validator,
+    this.ignoreValidatorIndex,
   }) : super(key: key);
 
   @override
@@ -147,7 +149,9 @@ class _CutomListTileState extends State<CutomListTileWithTextFeild> {
                   ? EdgeInsets.only(left: 20.0)
                   : EdgeInsets.only(left: 8.0),
               child: TextFormField(
-                validator: widget.validator,
+                validator: widget.ignoreValidatorIndex == index
+                    ? null
+                    : widget.validator,
                 controller: widget.controllers![index],
                 enabled: widget.enabled![index],
                 maxLines: widget.maxline,

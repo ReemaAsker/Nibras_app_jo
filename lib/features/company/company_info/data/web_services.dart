@@ -33,7 +33,7 @@ abstract class WebServices {
   Future<ApiResponse<bool>> deleteCompany(@Body() Map<String, int> companyData);
   @POST('company/update-company')
   @MultiPart()
-  Future<dynamic> updateCompany(
+  Future<ApiResponse<dynamic>> updateCompany(
     @Body() Company company,
   );
   @GET('company/get-companies')

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
 
 part 'company.g.dart';
@@ -26,9 +27,11 @@ class Company {
   dynamic deleted_at;
   String? created_at;
   String? updated_at;
+  String? fax;
+  String? reg_r;
+
   Company({
     this.id,
-    required this.picture,
     required this.company_name,
     required this.company_trademark,
     required this.company_title_id,
@@ -42,13 +45,16 @@ class Company {
     required this.email,
     this.notes,
     required this.a_address,
+    required this.address_desc,
+    required this.picture,
     this.created_by,
     this.updated_by,
-    required this.address_desc,
     this.deleted_by,
     this.deleted_at,
     this.created_at,
     this.updated_at,
+    this.fax,
+    this.reg_r,
   });
 
   /// Connect the generated [_$CompanyFromJson] function to the `fromJson`
@@ -57,9 +63,8 @@ class Company {
       _$CompanyFromJson(json);
 
   /// Connect the generated [_$CompanyToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$CompanyToJsonForCreate(this);
+  Map<String, dynamic> toJson() => _$CompanyToJson(this);
 
   /// Connect the generated [_$CompanyToJson] function to the `toJson` method.
-  Map<String, dynamic> toJsonForUpdate() => _$CompanyToJsonForUpdate(this);
-  
+  Map<String, dynamic> toCreateJson() => _$toJsonCompanyCreate(this);
 }

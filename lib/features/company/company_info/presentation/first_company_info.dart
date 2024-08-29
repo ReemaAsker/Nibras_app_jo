@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -80,6 +81,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   final TextEditingController _searchController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey(); // Global key for the form
+
   final GlobalKey<CustomListTileWithDropState> customListTileWithDropKey =
       GlobalKey<CustomListTileWithDropState>();
 
@@ -171,16 +173,45 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
 //
 // }
 
+  // Map<String, String> splitText(String input) {
+  //   // Define the regular expressions to extract the required parts
+  //   final RegExp prefixRegex = RegExp(r'\(([^)]+)\)');
+  //   final RegExp suffixRegex = RegExp(r'\(([^)]+)\)$');
+
+  //   // Extract the first part from parentheses
+  //   String first = '';
+  //   final firstMatch = prefixRegex.firstMatch(input);
+  //   if (firstMatch != null) {
+  //     first = firstMatch.group(1)!.trim();
+  //   }
+
+  //   // Extract the suffix part from parentheses at the end
+  //   String suffix = '';
+  //   final suffixMatch = suffixRegex.firstMatch(input);
+  //   if (suffixMatch != null) {
+  //     suffix = suffixMatch.group(1)!.trim();
+  //   }
+
+  //   // Extract the name part (the remaining text between the parentheses)
+  //   String ComName =
+  //       input.replaceAll(prefixRegex, '').replaceAll(suffixRegex, '').trim();
+
+  //   return {
+  //     'prefix': first,
+  //     'ComName': ComName,
+  //     'suffix': suffix,
+  //   };
+  // }
   Map<String, String> splitText(String input) {
     // Define the regular expressions to extract the required parts
     final RegExp prefixRegex = RegExp(r'\(([^)]+)\)');
     final RegExp suffixRegex = RegExp(r'\(([^)]+)\)$');
 
-    // Extract the first part from parentheses
-    String first = '';
-    final firstMatch = prefixRegex.firstMatch(input);
-    if (firstMatch != null) {
-      first = firstMatch.group(1)!.trim();
+    // Extract the prefix part from parentheses at the beginning
+    String prefix = '';
+    final prefixMatch = prefixRegex.firstMatch(input);
+    if (prefixMatch != null) {
+      prefix = prefixMatch.group(1)!.trim();
     }
 
     // Extract the suffix part from parentheses at the end
@@ -191,12 +222,20 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     }
 
     // Extract the name part (the remaining text between the parentheses)
-    String ComName =
+    String comName =
         input.replaceAll(prefixRegex, '').replaceAll(suffixRegex, '').trim();
 
+    // Remove the extra spaces around parentheses if they are present
+    if (prefix.isEmpty) {
+      comName = comName.replaceAll(RegExp(r'\s*\(\s*\)'), '');
+    }
+    if (suffix.isEmpty) {
+      comName = comName.replaceAll(RegExp(r'\s*\(\s*\)$'), '');
+    }
+
     return {
-      'prefix': first,
-      'ComName': ComName,
+      'prefix': prefix,
+      'ComName': comName,
       'suffix': suffix,
     };
   }
@@ -215,11 +254,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
               : existingCompany.id.toString();
 
       Map<String, String> splitting = splitText(existingCompany.company_name!);
-      print(splitText(existingCompany.company_name!));
-//   print('First: ${result['first']}'); // Output: Eng
-//   print('Name: ${result['name']}');   // Output: Ahmd Ali
-//   print('Suffix: ${result['suffix']}'); // Output: okok
-      print(splitting["prefix"]!);
+
       if (splitting.length == 3) {
         _textControllerForCompanyName.text =
             splitting["ComName"]!.isEmpty ? "" : splitting["ComName"]!;
@@ -263,7 +298,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           existingCompany.address_desc ?? '';
       _textControllerForCompanyNotes.text = existingCompany.notes ?? '';
       _selectedImage = existingCompany.picture ?? Icons.home;
-
+      _textControllerForCompanyFaxNumber.text = existingCompany.fax.toString();
+      _textControllerForCompanyCommercialNumber.text =
+          existingCompany.reg_r.toString();
       created_at = existingCompany.created_at.toString();
       updated_at = existingCompany.created_at.toString();
       // If you are using a CustomListTileWithDrop for Company Title, you can pass the ID
@@ -361,7 +398,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
         centerTitle: _isSearch ? true : false,
         elevation: 0,
         backgroundColor: MyColors.custom_light_grey,
-        automaticallyImplyLeading: _isSearch ? false : true,
+        automaticallyImplyLeading:
+            _isSearch || _isDisplayAllCompanyData ? false : true,
         actions: [
           Padding(
             padding: EdgeInsets.only(left: 10),
@@ -488,7 +526,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           fillCompanyData(state.data);
           CoolAlert.show(
             context: context,
-            title: "تم تحميل بيانات الشركة (${state.data.company_name}) بنجاح",
+            title:
+                "تم تحميل بيانات الشركة ${splitText(state.data.company_name!)["ComName"]} بنجاح",
             type: CoolAlertType.success,
           );
         } else if (state is CompanyFromAPISuccess) {
@@ -621,12 +660,10 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     return Column(
       children: [
         CutomListTileWithTextFeild(
+          ignoreValidatorIndex: 3,
           // enabled: _isEditable,
-          validator: (value) {
-            if (_textControllerForCompanyNameSuffix.text.isEmpty) {
-            } else
-              IsTextEmpty(value);
-          },
+          validator: (value) => IsTextEmpty(value),
+
           controllers: [
             _textControllerForCompanyNameID,
             _textControllerForCompanyNamePrefix,
@@ -648,7 +685,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             numOfTxTf: 1),
         CustomListTile(
           element: CustomListTileWithDrop<CompanyTitle>(
-            key: customListTileWithDropKey,
+            validator: (selectedItem) => IsTextEmpty(selectedItem),
+            // key: customListTileWithDropKey,
             items: companyTitles,
             itemFieldExtractor: (item) =>
                 (item as CompanyTitle).titlePrefix ?? '',
@@ -689,6 +727,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
         //     title: 'وصف المسمى'),
         CustomListTile(
             element: CustomListTileWithDrop<CompanyRgistrationStatus>(
+              validator: (selectedItem) => IsTextEmpty(selectedItem),
+
               items: companyRgistrationStatus, // List of CompanyType objects
               itemFieldExtractor: (item) => item.compType ?? '',
               idExtractor: (item) => item.id.toString(),
@@ -706,6 +746,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             title: 'صفة تسجيل المنشأة'),
         CustomListTile(
             element: CustomListTileWithDrop<CompanyCountryNational>(
+              validator: (selectedItem) => IsTextEmpty(selectedItem),
               items: companyNational,
               itemFieldExtractor: (item) =>
                   (item as CompanyCountryNational).nationalityDes ?? '',
@@ -718,6 +759,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             title: 'جنسية المنشأة'),
         CustomListTile(
             element: CustomListTileWithDrop<CompanyType>(
+              validator: (selectedItem) => IsTextEmpty(selectedItem),
               items: companyType,
               itemFieldExtractor: (item) => (item as CompanyType).type,
               idExtractor: (item) => item.id.toString(),
@@ -728,8 +770,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             ),
             title: 'نوع المنشأة'),
         CutomListTileWithTextFeild(
-          // validator: (value) =>
-          //     numberGreaterThanFourValidation(value),
+          validator: (value) => numberGreaterThanFourValidation(value),
           controllers: [
             _textControllerForCompanyNationalId,
           ],
@@ -737,8 +778,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           numOfTxTf: 1,
         ),
         CutomListTileWithTextFeild(
-          // validator: (value) =>
-          //     numberGreaterThanFourValidation(value),
+          validator: (value) => numberGreaterThanFourValidation(value),
           controllers: [
             _textControllerForCompanyRegisteration_Number,
           ],
@@ -746,8 +786,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           numOfTxTf: 1,
         ),
         CutomListTileWithTextFeild(
-          // validator: (value) =>
-          //     numberGreaterThanFourValidation(value),
+          validator: (value) => numberGreaterThanFourValidation(value),
           controllers: [
             _textControllerForCompanyCommercialNumber,
           ],
@@ -860,13 +899,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                               horizontal: 24.0,
                               vertical: 12.0), // Adjust padding
                         ),
-                        onPressed: () {
-                          Company updatedComp = createCompany();
-                          print("#############################");
-                          print(updatedComp.id);
-                          print("#############################");
-
-                          companyCubit.UpdateCompany(updatedComp);
+                        onPressed: () async {
+                          Company cc = await updateCreateCompany();
+                          companyCubit.UpdateCompany(cc);
                         },
                         child: Text(
                           "تعديل",
@@ -919,6 +954,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                                           .white, // This sets the text color
                                     ),
                                     onPressed: () {
+                                      print("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                      print(selectedId);
                                       companyCubit.deleteCompany(selectedId);
 
                                       Navigator.of(context).pop();
@@ -955,10 +992,20 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                               vertical: 12.0), // Adjust padding
                         ),
                         onPressed: () {
-                          if (_textControllerForCompanyNameID.text.isEmpty)
-                            _textControllerForCompanyNameID.text = "";
+                          // if (
+                          //     _formKey.currentState!.validate()) {
+                          //   companyCubit.createCompany(createCompany());
+                          // }
                           if (_formKey.currentState!.validate()) {
-                            companyCubit.createCompany(createCompany());
+                            if (_selectedImage != null) {
+                              companyCubit.createCompany(createCompany());
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    backgroundColor: Colors.red,
+                                    content: Text('صورة المنشأة مطلوبة..')),
+                              );
+                            }
                           }
                         },
                         child: const Text('سجل جديد'),
@@ -995,6 +1042,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
         address_desc: _textControllerForCompanyAddressTwo.text,
         a_address: int.tryParse(_textControllerForCompanyAddressOne.text),
         picture: _selectedImage,
+        fax: _textControllerForCompanyFaxNumber.text,
+        reg_r: _textControllerForCompanyCommercialNumber.text,
       );
     } catch (e, st) {
       print("here");
@@ -1006,43 +1055,181 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     return newCompany;
   }
 
-//   Future<void> createCompanyWebService(Company company) async {
-//     Dio dio = Dio(BaseOptions(
-//       baseUrl: 'https://srv568036.hstgr.cloud/api/',
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     ));
+  Future<Company> updateCreateCompany() async {
+    late Company newCompany;
+    // Dio dio = Dio();
+    // // Download the image data as bytes using Dio
+    // final response = await dio.get<List<int>>(
+    //   _selectedImage,
+    //   options: Options(responseType: ResponseType.bytes),
+    // );
+    // Uint8List imageBytes;
+    // if (response.statusCode == 200) {
+    //   // Convert the downloaded image data to Uint8List
+    //   imageBytes = Uint8List.fromList(response.data!);
 
-//     // Convert company data to a Map
-//     Map<String, dynamic> companyData = company.toJson();
+    try {
+      newCompany = Company(
+        id: int.parse(_textControllerForCompanyNameID.text),
+        company_name:
+            '(${_textControllerForCompanyNamePrefix.text.isEmpty ? "" : _textControllerForCompanyNamePrefix.text}) ${_textControllerForCompanyName.text.isEmpty ? "" : _textControllerForCompanyName.text} (${_textControllerForCompanyNameSuffix.text.isEmpty ? "" : _textControllerForCompanyNameSuffix.text})',
+        company_trademark: _textControllerForTradeMark.text,
+        company_title_id: int.parse(_textControllerForCompanyTitleId.text),
+        company_country_id:
+            int.tryParse(_textControllerForCompanyCountryID.text),
+        company_type_id: int.tryParse(_textControllerForCompanyTypeId.text),
+        company_cat_id: int.tryParse(_textControllerForCompanyCatId.text),
+        national_id: _textControllerForCompanyNationalId.text,
+        registration_number: _textControllerForCompanyRegisteration_Number.text,
+        phone: _textControllerForCompanyTelephoneNumber.text,
+        mobile: _textControllerForCompanyMobileNumber.text,
+        email: _textControllerForCompanyEmail.text,
+        notes: _textControllerForCompanyNotes.text,
+        address_desc: _textControllerForCompanyAddressTwo.text,
+        a_address: int.tryParse(_textControllerForCompanyAddressOne.text),
+        picture: _selectedImage,
+        fax: _textControllerForCompanyFaxNumber.text,
+        reg_r: _textControllerForCompanyCommercialNumber.text,
+      );
+    } catch (e, st) {
+      print("here");
+      print("okkkkk");
+      print(e);
 
-//     // Add image data to FormData
-//     MultipartFile? multipartFile;
-//     if (company.picture is Uint8List) {
-//       // Handle web image data
-//       multipartFile = MultipartFile.fromBytes(
-//         company.picture,
-//         filename: 'company_picture.png', // Adjust the filename as needed
-//       );
-//     } else if (company.picture is File) {
-//       // Handle mobile image data
-//       multipartFile = await MultipartFile.fromFile(
-//         company.picture.path,
-//         filename: _selectedImage!.path.split('/').last,
-//       );
-//     }
+      print(st);
+    }
+    return newCompany;
+  }
 
-//     // Add image data to companyData if needed
-//     companyData['picture'] = multipartFile;
+  Future<void> createCompanyWebService(Company company) async {
+    Dio dio = Dio(BaseOptions(
+      baseUrl: 'https://srv568036.hstgr.cloud/api/',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    ));
 
+    // Convert company data to a Map
+    Map<String, dynamic> companyData = company.toJson();
+
+    // Add image data to FormData
+    MultipartFile? multipartFile;
+    if (company.picture is Uint8List) {
+      // Handle web image data
+      multipartFile = MultipartFile.fromBytes(
+        company.picture,
+        filename: 'company_picture.png', // Adjust the filename as needed
+      );
+    } else if (company.picture is File) {
+      // Handle mobile image data
+      multipartFile = await MultipartFile.fromFile(
+        company.picture.path,
+        filename: _selectedImage!.path.split('/').last,
+      );
+    }
+
+    // Add image data to companyData if needed
+    companyData['picture'] = multipartFile;
+
+    // Create FormData
+    FormData formData = FormData.fromMap(companyData);
+
+    final response = await dio.post(
+      'company/create-company',
+      data: formData,
+    );
+  }
+
+  Future<void> updateCompanyWebService(Company company) async {
+    Dio dio = Dio(BaseOptions(
+      baseUrl: 'https://srv568036.hstgr.cloud/api/',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    ));
+
+    // Convert company data to a Map
+    Map<String, dynamic> companyData = company.toJson();
+
+    // Add image data to FormData
+    MultipartFile? multipartFile;
+    if (company.picture is Uint8List) {
+      // Handle web image data
+      multipartFile = MultipartFile.fromBytes(
+        company.picture,
+        filename: 'company_picture.png', // Adjust the filename as needed
+      );
+    } else if (company.picture is File) {
+      // Handle mobile image data
+      multipartFile = await MultipartFile.fromFile(
+        company.picture.path,
+        filename: _selectedImage!.path.split('/').last,
+      );
+    }
+
+    // Add image data to companyData if needed
+    companyData['picture'] = multipartFile;
+
+    // Create FormData
+    FormData formData = FormData.fromMap(companyData);
+
+    final response = await dio.post(
+      'company/update-company',
+      data: formData,
+    );
+  }
+}
+// Future<Response<dynamic>> updateCompany({
+//   required int id,
+//   required String? companyName,
+//   required String? companyTrademark,
+//   required int? companyTitleId,
+//   required int? companyCountryId,
+//   required int? companyTypeId,
+//   required int? companyCatId,
+//   required String? nationalId,
+//   required String? registrationNumber,
+//   required String? phone,
+//   required String? mobile,
+//   required String? email,
+//   String? notes,
+//   required int? aAddress,
+//   required String? addressDesc,
+//   File? picture, // Use File type to represent the image
+// }) async {
+//   try {
 //     // Create FormData
-//     FormData formData = FormData.fromMap(companyData);
+//     final formData = FormData.fromMap({
+//       'id': id,
+//       'company_name': companyName,
+//       'company_trademark': companyTrademark,
+//       'company_title_id': companyTitleId,
+//       'company_country_id': companyCountryId,
+//       'company_type_id': companyTypeId,
+//       'company_cat_id': companyCatId,
+//       'national_id': nationalId,
+//       'registration_number': registrationNumber,
+//       'phone': phone,
+//       'mobile': mobile,
+//       'email': email,
+//       'notes': notes,
+//       'a_address': aAddress,
+//       'address_desc': addressDesc,
+//       // Add picture if it's provided and handle it as MultipartFile
+//       if (picture != null)
+//         'picture':
+//             await MultipartFile.fromFile(picture.path, filename: 'picture.jpg'),
+//     });
 
-//     final response = await dio.post(
-//       'company/create-company',
+//     // Send the POST request
+//     final response = await _dio.post(
+//       'company/update-company', // Adjust the endpoint if necessary
 //       data: formData,
 //     );
+
+//     return response;
+//   } catch (e) {
+//     // Handle errors appropriately
+//     throw Exception('Failed to update company: $e');
 //   }
 // }
-}
