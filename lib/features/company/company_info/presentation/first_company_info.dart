@@ -1,17 +1,22 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nibras_group_jor/core/extentiions/find_where_droppable.dart';
 import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 import 'package:nibras_group_jor/core/widgets/validations_rules.dart';
 import 'package:nibras_group_jor/features/company/company_info/business_logic/cubit/company_cubit.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/CompanyRgistrationStatus.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company_country_national.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company_title.dart';
+import '../../../../core/helper/connectivity_service.dart';
 import '../../../../core/widgets/customListTile.dart';
 import '../../../../core/widgets/custom_drop_down_with_date.dart';
 import '../../../../core/widgets/custom_list_tile_with_drop.dart';
@@ -84,7 +89,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
 
   final GlobalKey<CustomListTileWithDropState> customListTileWithDropKey =
       GlobalKey<CustomListTileWithDropState>();
-
+  Color? noActionColor;
   late dynamic _selectedImage = Icons.home;
   late int selectedId;
   bool _isSearch = false;
@@ -100,16 +105,43 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   ];
   late String created_at;
   late String updated_at;
-
+  // final ConnectivityService connectivityService = ConnectivityService();
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  late Company currentCompany;
   @override
   void initState() {
     companyCubit.noState().then((value) => new_id = value + 1);
 
+    // companyCubit.noState();
+    // Listen to connectivity changes
+    // _connectivitySubscription =
+    //     _connectivity.onConnectivityChanged.listen((result) {
+    //   // Print the result to debug and see the connectivity change
+    //   print("Connectivity Result: $result");
+
+    //   if (result != ConnectivityResult.none) {
+    //     print("Connected to the internet");
+    //     companyCubit.noState();
+    //   } else {
+    //     print("NOOOOOOOOOOOOOOOOOOO Internet");
+    //     // Handle no internet connection scenario
+    //   }
+    // });
+    // print(_connectivitySubscription);
+    // _connectivitySubscription = Connectivity()
+    //     .onConnectivityChanged
+    //     .listen((List<ConnectivityResult> result) {
+    //   print("**************");
+    //   print(result);
     super.initState();
+    // });
   }
 
   @override
   void dispose() {
+    _connectivitySubscription.cancel();
+
     _textControllerForCompanyNameID.dispose();
     _textControllerForCompanyName.dispose();
     _textControllerForTradeMark.dispose();
@@ -241,6 +273,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   }
 
   fillCompanyData(Company existingCompany) {
+    currentCompany = existingCompany;
     // print("datee");
     // print(existingCompany.created_at.runtimeType);
     // print(existingCompany.updated_at.runtimeType);
@@ -453,6 +486,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           companyRgistrationStatus = state.companyRgistrationStatus;
           companyNational = state.nationalites;
           companyTitles = state.CompanyTitles;
+          // companyTitles.forEach((title) {
+          //   print("title ${title.toJson()}");
+          // });
           clearAllFields();
         } else if (state is CompanyFromAPILoading) {
         } else if (state is CompanyFilteringLoading) {
@@ -476,8 +512,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
           CoolAlert.show(
             context: context,
             type: CoolAlertType.error,
-            text: 'خطأ',
+            text: ' ( مشكلة في الانترنت)خطأ',
           );
+          noActionColor = Colors.black;
           // companyCubit.noState();
         } else if (state is CompanyDeletedSuccess) {
           CoolAlert.show(
@@ -549,31 +586,44 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
         child: SingleChildScrollView(
           child: BlocBuilder<CompanyCubit, CompanyState>(
             builder: (context, state) {
-              if (state is DisplayingDataSuccess) {}
+              if (state is DisplayingDataSuccess) {
+                print("select state");
+                return Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      FormCompany(new_id, selectedCompany: state.data),
+                    ],
+                  ),
+                );
+              }
               if (state is CompanyFromAPILoading ||
                   state is CompanyFilteringLoading ||
                   state is NoStateLoading) {
                 return Center(
                     child: Column(
                   children: [
-                    CircularProgressIndicator(
-                      color: MyColors.custom_yellow,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text("جاري التحميل ..")
+                    // CircularProgressIndicator(
+                    //   color: MyColors.custom_yellow,
+                    // ),
+
+                    Center(child: Image.asset('assets/loading.gif')),
+
+                    Text(
+                      "جاري التحميل ..",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )
                   ],
                 ));
               } else if (state is CompanyFromAPISuccess) {
                 final List<CompanyInfoFromApi> companyList = state.company;
                 return _buildCompanyList(companyList);
-              } else if (state is CompanyError) {
-                // return Center(
-                //     child: Text(
-                //   'مشكلة في تحميل البيانات (افحص الانترنت)',
-                //   style: TextStyle(color: MyColors.custom_blue),
-                // ));
+              } else if (state is CompanyError && _isSearch) {
+                return Center(
+                    child: Text(
+                  'مشكلة في تحميل البيانات (افحص الانترنت)',
+                  style: TextStyle(color: MyColors.custom_blue),
+                ));
               } else if (state is CompanySearch) {
                 return _buildCompanyList(state.data);
               }
@@ -620,6 +670,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
               ))
             : ListView.builder(
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 itemCount: companyList.length,
                 itemBuilder: (context, index) {
                   int itemCount = companyList.length;
@@ -656,7 +707,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     );
   }
 
-  Widget FormCompany(int nId) {
+  Widget FormCompany(int nId, {Company? selectedCompany}) {
     return Column(
       children: [
         CutomListTileWithTextFeild(
@@ -685,14 +736,11 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             numOfTxTf: 1),
         CustomListTile(
           element: CustomListTileWithDrop<CompanyTitle>(
+            items: companyTitles,
+            initialValue: companyTitles
+                .findWhereCompanyTitle(selectedCompany?.company_title_id),
             validator: (selectedItem) => IsTextEmpty(selectedItem),
             // key: customListTileWithDropKey,
-            items: companyTitles,
-            itemFieldExtractor: (item) =>
-                (item as CompanyTitle).titlePrefix ?? '',
-            itemFieldExtractorSuffix: (item) =>
-                (item as CompanyTitle).titleSuffix ?? '',
-            idExtractor: (item) => (item as CompanyTitle).id.toString(),
             onChanged: (selectedItem) {
               _textControllerForCompanyTitleId.text =
                   (selectedItem as CompanyTitle).id.toString();
@@ -728,19 +776,14 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
         CustomListTile(
             element: CustomListTileWithDrop<CompanyRgistrationStatus>(
               validator: (selectedItem) => IsTextEmpty(selectedItem),
-
               items: companyRgistrationStatus, // List of CompanyType objects
-              itemFieldExtractor: (item) => item.compType ?? '',
-              idExtractor: (item) => item.id.toString(),
-
+              initialValue: companyRgistrationStatus
+                  .findWhereCompanyType(selectedCompany?.company_type_id),
               onChanged: (selectedItem) {
                 _textControllerForCompanyTypeId.text =
                     (selectedItem as CompanyRgistrationStatus).id.toString();
 
                 // Handle the selected item
-              },
-              descExtractor: (item) {
-                return (item as CompanyRgistrationStatus).compDesc ?? "";
               },
             ),
             title: 'صفة تسجيل المنشأة'),
@@ -748,9 +791,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             element: CustomListTileWithDrop<CompanyCountryNational>(
               validator: (selectedItem) => IsTextEmpty(selectedItem),
               items: companyNational,
-              itemFieldExtractor: (item) =>
-                  (item as CompanyCountryNational).nationalityDes ?? '',
-              idExtractor: (item) => item.id.toString(),
+              initialValue: companyNational
+                  .findWhereCompanyCountry(selectedCompany?.company_country_id),
               onChanged: (selectedItem) {
                 _textControllerForCompanyCountryID.text =
                     (selectedItem as CompanyCountryNational).id.toString();
@@ -761,8 +803,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
             element: CustomListTileWithDrop<CompanyType>(
               validator: (selectedItem) => IsTextEmpty(selectedItem),
               items: companyType,
-              itemFieldExtractor: (item) => (item as CompanyType).type,
-              idExtractor: (item) => item.id.toString(),
+              initialValue: companyType
+                  .findWhereCompanyCategory(selectedCompany?.company_cat_id),
               onChanged: (selectedItem) {
                 _textControllerForCompanyCatId.text =
                     (selectedItem as CompanyType).id.toString();
@@ -900,8 +942,16 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                               vertical: 12.0), // Adjust padding
                         ),
                         onPressed: () async {
-                          Company cc = await updateCreateCompany();
-                          companyCubit.UpdateCompany(cc);
+                          if (checkHasUpdates()) {
+                            Company cc = await updateCreateCompany();
+                            companyCubit.UpdateCompany(cc);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  backgroundColor: MyColors.custom_blue,
+                                  content: Text('.. لم تقم بأي تعديلات')),
+                            );
+                          }
                         },
                         child: Text(
                           "تعديل",
@@ -982,7 +1032,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          backgroundColor: MyColors.custom_blue, // Text color
+                          backgroundColor: noActionColor ??
+                              MyColors.custom_blue, // Text color
                           shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.circular(10.0), // Rounded corners
@@ -992,11 +1043,9 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                               vertical: 12.0), // Adjust padding
                         ),
                         onPressed: () {
-                          // if (
-                          //     _formKey.currentState!.validate()) {
-                          //   companyCubit.createCompany(createCompany());
-                          // }
-                          if (_formKey.currentState!.validate()) {
+                          if (nId == 1) {
+                            return;
+                          } else if (_formKey.currentState!.validate()) {
                             if (_selectedImage != null) {
                               companyCubit.createCompany(createCompany());
                             } else {
@@ -1053,6 +1102,36 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
       print(st);
     }
     return newCompany;
+  }
+
+  bool checkHasUpdates() {
+    return splitText(currentCompany.company_name!)["ComName"] !=
+            _textControllerForCompanyName.text ||
+        currentCompany.company_trademark != _textControllerForTradeMark.text ||
+        currentCompany.company_title_id.toString() !=
+            _textControllerForCompanyTitleId.text ||
+        currentCompany.national_id !=
+            _textControllerForCompanyNationalId.text ||
+        currentCompany.registration_number !=
+            _textControllerForCompanyRegisteration_Number.text ||
+        currentCompany.company_type_id.toString() !=
+            _textControllerForCompanyTypeId.text ||
+        currentCompany.company_cat_id.toString() !=
+            _textControllerForCompanyCatId.text ||
+        currentCompany.company_country_id.toString() !=
+            _textControllerForCompanyCountryID.text ||
+        currentCompany.mobile != _textControllerForCompanyMobileNumber.text ||
+        currentCompany.phone != _textControllerForCompanyTelephoneNumber.text ||
+        currentCompany.email != _textControllerForCompanyEmail.text ||
+        currentCompany.a_address.toString() !=
+            _textControllerForCompanyAddressOne.text ||
+        currentCompany.address_desc !=
+            _textControllerForCompanyAddressTwo.text ||
+        currentCompany.notes != _textControllerForCompanyNotes.text ||
+        currentCompany.fax != _textControllerForCompanyFaxNumber.text ||
+        currentCompany.reg_r !=
+            _textControllerForCompanyCommercialNumber.text ||
+        currentCompany.picture != _selectedImage;
   }
 
   Future<Company> updateCreateCompany() async {

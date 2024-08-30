@@ -132,3 +132,34 @@
     final _value = _result.data;
     return _value;
   }
+//////////////////////
+
+  bool checkHasUpdates() {
+    return splitText(currentCompany.company_name!)["ComName"] !=
+            _textControllerForCompanyName.text ||
+        currentCompany.company_trademark != _textControllerForTradeMark.text ||
+        currentCompany.company_title_id.toString() !=
+            _textControllerForCompanyTitleId.text ||
+        currentCompany.national_id !=
+            _textControllerForCompanyNationalId.text ||
+        currentCompany.registration_number !=
+            _textControllerForCompanyRegisteration_Number.text ||
+        currentCompany.company_type_id.toString() !=
+            _textControllerForCompanyTypeId.text ||
+        currentCompany.company_cat_id.toString() !=
+            _textControllerForCompanyCatId.text ||
+        currentCompany.company_country_id.toString() !=
+            _textControllerForCompanyCountryID.text ||
+        currentCompany.mobile != _textControllerForCompanyMobileNumber.text ||
+        currentCompany.phone != _textControllerForCompanyTelephoneNumber.text ||
+        currentCompany.email != _textControllerForCompanyEmail.text ||
+        currentCompany.a_address.toString() !=
+            _textControllerForCompanyAddressOne.text ||
+        currentCompany.address_desc !=
+            _textControllerForCompanyAddressTwo.text ||
+        currentCompany.notes != _textControllerForCompanyNotes.text ||
+        currentCompany.fax != _textControllerForCompanyFaxNumber.text ||
+        currentCompany.reg_r !=
+            _textControllerForCompanyCommercialNumber.text ||
+        currentCompany.picture != _selectedImage;
+  }

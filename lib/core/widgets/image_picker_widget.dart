@@ -1,9 +1,9 @@
-// import 'dart:io';
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:file_picker/file_picker.dart';
-// import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 
 // // // class ImagePickerWidget extends StatefulWidget {
 // // //   const ImagePickerWidget({
@@ -344,7 +344,7 @@
 // //     );
 // //   }
 // // }
-
+///////////////////////////////////////////////////////////////////
 // class ImagePickerWidget extends StatefulWidget {
 //   const ImagePickerWidget({
 //     super.key,
@@ -508,7 +508,166 @@
 //     );
 //   }
 // }
-import 'dart:io';
+///////////////only for mobile
+// import 'dart:io';
+// import 'dart:typed_data';
+
+// import 'package:file_picker/file_picker.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
+// import 'package:image_picker/image_picker.dart';
+
+// class ImagePickerWidget extends StatefulWidget {
+//   const ImagePickerWidget({
+//     super.key,
+//     this.defaultIcon,
+//     required this.onImagePicked,
+//   });
+
+//   final dynamic defaultIcon; // Can be IconData or NetworkImage
+//   final Function(dynamic) onImagePicked; // Callback to handle image data
+
+//   @override
+//   State<ImagePickerWidget> createState() => ImagePickerState();
+// }
+
+// class ImagePickerState extends State<ImagePickerWidget> {
+//   dynamic _image; // Can be File
+//   final picker = ImagePicker();
+
+//   Future<void> getImage(ImageSource source) async {
+//     try {
+//       if (!kIsWeb) {
+//         final pickedFile = await picker.pickImage(source: source);
+//         if (pickedFile != null) {
+//           if (pickedFile.path.endsWith('.png') ||
+//               pickedFile.path.endsWith('.jpg') ||
+//               pickedFile.path.endsWith('.jpeg')) {
+//             final file = File(pickedFile.path);
+//             setState(() {
+//               _image = file; // Store as File
+//             });
+//             widget.onImagePicked(_image); // Return File
+//           } else {
+//             showSnackBar('الرجاء تحميل صورة من نوع PNG أو JPG.');
+//           }
+//         } else {
+//           showSnackBar('لم يتم اختيار صورة.');
+//         }
+//       }
+//     } catch (e) {
+//       print("Error: $e");
+//     }
+//   }
+
+//   void showSnackBar(String message) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(
+//         backgroundColor: Colors.purple,
+//         content: Text(message),
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // If running on the web, return an empty container
+//     if (kIsWeb) {
+//       return Container();
+//     }
+
+//     ImageProvider? imageProvider;
+//     if (_image != null) {
+//       imageProvider = FileImage(_image as File);
+//     }
+
+//     return Center(
+//       child: Column(
+//         children: [
+//           InkWell(
+//             onTap: () {
+//               showModalBottomSheet(
+//                 context: context,
+//                 builder: (BuildContext context) {
+//                   return SafeArea(
+//                     child: Column(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: <Widget>[
+//                         ListTile(
+//                           leading: Icon(Icons.camera_alt),
+//                           title: Text('التقط صورة بالكاميرا'),
+//                           onTap: () {
+//                             getImage(ImageSource.camera);
+//                             Navigator.pop(context);
+//                           },
+//                         ),
+//                         ListTile(
+//                           leading: Icon(Icons.photo_library),
+//                           title: Text('اختر من الاستوديو'),
+//                           onTap: () {
+//                             getImage(ImageSource.gallery);
+//                             Navigator.pop(context);
+//                           },
+//                         ),
+//                       ],
+//                     ),
+//                   );
+//                 },
+//               );
+//             },
+//             child: Container(
+//               margin: EdgeInsets.only(top: 8),
+//               width: double.infinity,
+//               decoration: BoxDecoration(
+//                 color: MyColors.custom_yellow,
+//                 borderRadius: BorderRadius.all(Radius.circular(10)),
+//               ),
+//               padding: const EdgeInsets.all(12),
+//               child: Row(
+//                 crossAxisAlignment: CrossAxisAlignment.center,
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Icon(
+//                     Icons.cloud_upload_rounded,
+//                     color: Colors.white,
+//                     size: 20,
+//                   ),
+//                   SizedBox(width: 8),
+//                   Text('انقر هنا لتحميل الصورة'),
+//                   SizedBox(width: 8),
+//                   CircleAvatar(
+//                     radius: 30,
+//                     backgroundImage: imageProvider,
+//                     child: _image == null
+//                         ? widget.defaultIcon is IconData
+//                             ? Icon(
+//                                 widget.defaultIcon,
+//                                 size: 30,
+//                                 color: Colors.black,
+//                               )
+//                             : widget.defaultIcon is String
+//                                 ? ClipOval(
+//                                     child: Image.network(
+//                                       widget.defaultIcon,
+//                                       fit: BoxFit.cover,
+//                                       width: 60,
+//                                       height: 60,
+//                                     ),
+//                                   )
+//                                 : null
+//                         : null,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+///////////////
+///import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -537,11 +696,13 @@ class ImagePickerState extends State<ImagePickerWidget> {
   Future<void> getImage(ImageSource source) async {
     try {
       if (kIsWeb) {
-        if (source == ImageSource.camera) {
-          // Handle camera access for web
-          final result =
-              await FilePicker.platform.pickFiles(type: FileType.image);
-          if (result != null) {
+        final result =
+            await FilePicker.platform.pickFiles(type: FileType.image);
+        if (result != null) {
+          final fileName = result.files.single.name;
+          if (fileName.endsWith('.png') ||
+              fileName.endsWith('.jpg') ||
+              fileName.endsWith('.jpeg')) {
             final bytes = result.files.single.bytes;
             if (bytes != null) {
               setState(() {
@@ -549,62 +710,46 @@ class ImagePickerState extends State<ImagePickerWidget> {
               });
               widget.onImagePicked(_image); // Return Uint8List
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    backgroundColor: Colors.purple,
-                    content: Text('لا بيانات صورة.')),
-              );
+              showSnackBar('لا بيانات صورة.');
             }
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  backgroundColor: Colors.purple,
-                  content: Text('لم يتم اختيار صورة.')),
-            );
+            showSnackBar('الرجاء تحميل صورة من نوع PNG أو JPG.');
           }
         } else {
-          // Handle gallery access for web
-          final result =
-              await FilePicker.platform.pickFiles(type: FileType.image);
-          if (result != null) {
-            final bytes = result.files.single.bytes;
-            if (bytes != null) {
-              setState(() {
-                _image = bytes; // Store as Uint8List
-              });
-              widget.onImagePicked(_image); // Return Uint8List
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    backgroundColor: Colors.purple,
-                    content: Text('لا بيانات صورة.')),
-              );
-            }
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  backgroundColor: Colors.purple,
-                  content: Text('لم يتم اختيار صورة.')),
-            );
-          }
+          showSnackBar('لم يتم اختيار صورة.');
         }
       } else {
         final pickedFile = await picker.pickImage(source: source);
         if (pickedFile != null) {
-          final file = File(pickedFile.path);
-          setState(() {
-            _image = file; // Store as File
-          });
-          widget.onImagePicked(_image); // Return File
+          if (pickedFile.path.endsWith('.png') ||
+              pickedFile.path.endsWith('.jpg') ||
+              pickedFile.path.endsWith('.jpeg')) {
+            final file = File(pickedFile.path);
+            setState(() {
+              _image = file; // Store as File
+            });
+            widget.onImagePicked(_image); // Return File
+          } else {
+            showSnackBar(
+              'الرجاء تحميل صورة من نوع PNG أو JPG.',
+            );
+          }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.purple,
-              content: Text('لم يتم اختيار صورة.')));
+          showSnackBar('لم يتم اختيار صورة.');
         }
       }
     } catch (e) {
       print("Error: $e");
     }
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.purple,
+        content: Text(message),
+      ),
+    );
   }
 
   @override
@@ -656,7 +801,7 @@ class ImagePickerState extends State<ImagePickerWidget> {
               margin: EdgeInsets.only(top: 8),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.yellow,
+                color: MyColors.custom_yellow,
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               padding: const EdgeInsets.all(12),

@@ -1,4 +1,6 @@
-class CompanyType {
+import 'package:nibras_group_jor/core/interfaces/droppable.dart';
+
+class CompanyType extends Droppable {
   int id;
   String type;
 
@@ -22,4 +24,10 @@ class CompanyType {
       type: json['type'],
     );
   }
+
+  @override
+  String getDropValue() => type;
+
+  @override
+  String getId() => id.toString();
 }

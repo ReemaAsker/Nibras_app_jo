@@ -9,9 +9,12 @@ import 'package:nibras_group_jor/features/company/company_info/data/web_services
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/helper/api_Exception.dart';
+import '../../../../core/helper/connectivity_service.dart';
 
 class CompanyRepo {
   final WebServices webservices;
+  // final ConnectivityService? connectivityService;
+
   CompanyRepo(this.webservices);
   Future<Company> getCompanyById(int id) async {
     ApiResponse<Company> response = await webservices.getCompanyById(id);

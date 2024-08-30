@@ -2,7 +2,9 @@
 Company registration status
 */
 
-class CompanyRgistrationStatus {
+import 'package:nibras_group_jor/core/interfaces/droppable.dart';
+
+class CompanyRgistrationStatus extends Droppable {
   int? id;
   String? compType;
   String? compDesc;
@@ -22,4 +24,13 @@ class CompanyRgistrationStatus {
     data['comp_desc'] = this.compDesc;
     return data;
   }
+
+  @override
+  String? getDescription() => compDesc;
+
+  @override
+  String getDropValue() => compType ?? '';
+
+  @override
+  String getId() => id?.toString() ?? '';
 }

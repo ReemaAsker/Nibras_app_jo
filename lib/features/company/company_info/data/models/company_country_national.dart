@@ -1,4 +1,6 @@
-class CompanyCountryNational {
+import 'package:nibras_group_jor/core/interfaces/droppable.dart';
+
+class CompanyCountryNational extends Droppable {
   int? id;
   String? countryDes;
   String? nationalityDes;
@@ -18,4 +20,10 @@ class CompanyCountryNational {
     data['nationality_des'] = this.nationalityDes;
     return data;
   }
+
+  @override
+  String getDropValue() => nationalityDes ?? "";
+
+  @override
+  String getId() => id.toString();
 }

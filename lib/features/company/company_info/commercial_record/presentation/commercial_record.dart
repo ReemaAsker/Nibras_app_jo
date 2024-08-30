@@ -57,22 +57,208 @@ class _CommercialRecordState extends State<CommercialRecord> {
     super.dispose();
   }
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(
+//           'السجل التجاري للمنشأة',
+//         ),
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(children: [
+//           Container(
+//             color: Colors.white24.withOpacity(0.8),
+//             child: Column(
+//               children: [
+//                 ExpansionTile(
+//                   title: Container(
+//                       padding: EdgeInsets.all(10),
+//                       decoration: BoxDecoration(
+//                         color: MyColors.custom_blue,
+//                       ),
+//                       width: double.infinity,
+//                       child: Text(
+//                         'معلومات المنشأة',
+//                         style: TextStyle(
+//                             color: Colors.white,
+//                             fontWeight: FontWeight.bold,
+//                             fontSize: 16),
+//                       )),
+//                   children: [
+//                     CutomListTileWithTextFeild(
+//                       numOfTxTf: 2,
+//                       title: 'اسم المنشأة',
+//                       enabled: [false, false],
+//                       hintLabel: ['26', 'شركة الفوسفات'],
+//                       controllers: [
+//                         establishmentNameController1,
+//                         establishmentNameController2
+//                       ],
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: ' العلامة التجارية',
+//                       numOfTxTf: 1,
+//                       enabled: [false],
+//                       hintLabel: ['شركة الفوسفات'],
+//                       controllers: [brandNameController],
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: '  صفة تسجيل المنشأة',
+//                       numOfTxTf: 1,
+//                       enabled: [false],
+//                       hintLabel: ['شركة  تضامنية'],
+//                       controllers: [registrationStatusController],
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: ' نوع المنشأة',
+//                       numOfTxTf: 1,
+//                       enabled: [false],
+//                       hintLabel: ['منشأة حكومية '],
+//                       controllers: [establishmentTypeController],
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: 'جنسية المنشأة   ',
+//                       numOfTxTf: 1,
+//                       enabled: [false],
+//                       hintLabel: [' شركة اردنية '],
+//                       controllers: [establishmentNationalityController],
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: ' رقم السجل التجاري   ',
+//                       numOfTxTf: 1,
+//                       enabled: [false],
+//                       hintLabel: ['5289364  '],
+//                       controllers: [commercialRecordNumberController],
+//                     ),
+//                   ],
+//                 ),
+//                 // SizedBox(
+//                 //   height: 12,
+//                 // ),
+//                 ExpansionTile(
+//                   title: Container(
+//                       padding: EdgeInsets.all(10),
+//                       decoration: BoxDecoration(
+//                         color: MyColors.custom_blue,
+//                       ),
+//                       width: double.infinity,
+//                       child: Text(
+//                         'معلومات السجل التجاري',
+//                         style: TextStyle(
+//                             color: Colors.white,
+//                             fontWeight: FontWeight.bold,
+//                             fontSize: 16),
+//                       )),
+//                   children: [
+//                     CutomListTileWithTextFeild(
+//                       title: 'التسلسل',
+//                       numOfTxTf: 1,
+//                       hintLabel: [' '],
+//                       controllers: [sequenceController],
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: 'تسلسل السجل التجاري',
+//                       numOfTxTf: 1,
+//                       hintLabel: [' '],
+//                       controllers: [commercialRecordSequenceController],
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: 'اصدار السجل التجاري',
+//                       numOfTxTf: 1,
+//                       hintLabel: [' '],
+//                       controllers: [commercialRecordIssuanceController],
+//                     ),
+//                     CustomListTile(
+//                       element: CalendarPickerWidget(
+//                         initialDate:
+//                             '2020-09-05', // Example initial date string
+//                         onDateSelected: (selectedDate) {
+//                           setState(() {
+//                             _commercialRegistrationDate = selectedDate;
+//                           });
+//                         },
+//                       ),
+//                       title: 'تاريخ السجل التجاري',
+//                     ),
+//                     CutomListTileWithTextFeild(
+//                       title: 'وقائع التفويض  ',
+//                       numOfTxTf: 1,
+//                       maxline: 7,
+//                       controllers: [authorizationDetailsController],
+//                     ),
+//                   ],
+//                 ),
+//                 ExpansionTile(
+//                   title: Container(
+//                       padding: EdgeInsets.all(10),
+//                       decoration: BoxDecoration(
+//                         color: MyColors.custom_blue,
+//                       ),
+//                       width: double.infinity,
+//                       child: Text(
+//                         'اخري',
+//                         style: TextStyle(
+//                             color: Colors.white,
+//                             fontWeight: FontWeight.bold,
+//                             fontSize: 16),
+//                       )),
+//                   children: [
+//                     CutomListTileWithTextFeild(
+//                       title: 'ملاحظات   ',
+//                       numOfTxTf: 1,
+//                       maxline: 4,
+//                       controllers: [notesController],
+//                     ),
+//                     SizedBox(
+//                       height: 30,
+//                     )
+//                   ],
+//                 ),
+
+//                 Row(
+//                   children: [
+//                     Expanded(
+//                       child: CustomListTileWithDate(
+//                         forEdit: false,
+//                         title: '  تاريخ السجل   ',
+//                       ),
+//                     ),
+//                     Expanded(
+//                       child: CustomListTileWithDate(
+//                         forEdit: false,
+//                         title: '  تاريخ التحديث   ',
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 SizedBox(
+//                   height: 10,
+//                 )
+//               ],
+//             ),
+//           ),
+//         ]),
+//       ),
+//     );
+//   }
+// }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'السجل التجاري للمنشأة',
-        ),
+        title: Text('السجل التجاري للمنشأة'),
       ),
       body: SingleChildScrollView(
-        child: Column(children: [
-          Container(
-            color: Colors.white24.withOpacity(0.8),
-            child: Column(
-              children: [
-                Container(
-                    padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white24.withOpacity(0.8),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: MyColors.custom_blue,
                     ),
@@ -83,132 +269,140 @@ class _CommercialRecordState extends State<CommercialRecord> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16),
-                    )),
-                CutomListTileWithTextFeild(
-                  numOfTxTf: 2,
-                  title: 'اسم المنشأة',
-                  enabled: [false, false],
-                  hintLabel: ['26', 'شركة الفوسفات'],
-                  controllers: [
-                    establishmentNameController1,
-                    establishmentNameController2
-                  ],
-                ),
-                CutomListTileWithTextFeild(
-                  title: ' العلامة التجارية',
-                  numOfTxTf: 1,
-                  enabled: [false],
-                  hintLabel: ['شركة الفوسفات'],
-                  controllers: [brandNameController],
-                ),
-                CutomListTileWithTextFeild(
-                  title: '  صفة تسجيل المنشأة',
-                  numOfTxTf: 1,
-                  enabled: [false],
-                  hintLabel: ['شركة  تضامنية'],
-                  controllers: [registrationStatusController],
-                ),
-                CutomListTileWithTextFeild(
-                  title: ' نوع المنشأة',
-                  numOfTxTf: 1,
-                  enabled: [false],
-                  hintLabel: ['منشأة حكومية '],
-                  controllers: [establishmentTypeController],
-                ),
-                CutomListTileWithTextFeild(
-                  title: 'جنسية المنشأة   ',
-                  numOfTxTf: 1,
-                  enabled: [false],
-                  hintLabel: [' شركة اردنية '],
-                  controllers: [establishmentNationalityController],
-                ),
-                CutomListTileWithTextFeild(
-                  title: ' رقم السجل التجاري   ',
-                  numOfTxTf: 1,
-                  enabled: [false],
-                  hintLabel: ['5289364  '],
-                  controllers: [commercialRecordNumberController],
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: MyColors.custom_blue,
                     ),
-                    width: double.infinity,
-                    child: Text(
-                      'معلومات السجل التجاري',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    )),
-                CutomListTileWithTextFeild(
-                  title: 'التسلسل',
-                  numOfTxTf: 1,
-                  hintLabel: [' '],
-                  controllers: [sequenceController],
-                ),
-                CutomListTileWithTextFeild(
-                  title: 'تسلسل السجل التجاري',
-                  numOfTxTf: 1,
-                  hintLabel: [' '],
-                  controllers: [commercialRecordSequenceController],
-                ),
-                CutomListTileWithTextFeild(
-                  title: 'اصدار السجل التجاري',
-                  numOfTxTf: 1,
-                  hintLabel: [' '],
-                  controllers: [commercialRecordIssuanceController],
-                ),
-                CustomListTile(
-                  element: CalendarPickerWidget(
-                    initialDate: '2020-09-05', // Example initial date string
-                    onDateSelected: (selectedDate) {
-                      setState(() {
-                        _commercialRegistrationDate = selectedDate;
-                      });
-                    },
                   ),
-                  title: 'تاريخ السجل التجاري',
-                ),
-                CutomListTileWithTextFeild(
-                  title: 'وقائع التفويض  ',
-                  numOfTxTf: 1,
-                  maxline: 7,
-                  controllers: [authorizationDetailsController],
-                ),
-                CutomListTileWithTextFeild(
-                  title: 'ملاحظات   ',
-                  numOfTxTf: 1,
-                  maxline: 4,
-                  controllers: [notesController],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomListTileWithDate(
-                        forEdit: false,
-                        title: '  تاريخ السجل   ',
+                  CutomListTileWithTextFeild(
+                    numOfTxTf: 2,
+                    title: 'اسم المنشأة',
+                    enabled: [false, false],
+                    hintLabel: ['26', 'شركة الفوسفات'],
+                    controllers: [
+                      establishmentNameController1,
+                      establishmentNameController2
+                    ],
+                  ),
+                  CutomListTileWithTextFeild(
+                    title: 'العلامة التجارية',
+                    numOfTxTf: 1,
+                    enabled: [false],
+                    hintLabel: ['شركة الفوسفات'],
+                    controllers: [brandNameController],
+                  ),
+                  CutomListTileWithTextFeild(
+                    title: 'صفة تسجيل المنشأة',
+                    numOfTxTf: 1,
+                    enabled: [false],
+                    hintLabel: ['شركة تضامنية'],
+                    controllers: [registrationStatusController],
+                  ),
+                  CutomListTileWithTextFeild(
+                    title: 'نوع المنشأة',
+                    numOfTxTf: 1,
+                    enabled: [false],
+                    hintLabel: ['منشأة حكومية'],
+                    controllers: [establishmentTypeController],
+                  ),
+                  CutomListTileWithTextFeild(
+                    title: 'جنسية المنشأة',
+                    numOfTxTf: 1,
+                    enabled: [false],
+                    hintLabel: ['شركة اردنية'],
+                    controllers: [establishmentNationalityController],
+                  ),
+                  CutomListTileWithTextFeild(
+                    title: 'رقم السجل التجاري',
+                    numOfTxTf: 1,
+                    enabled: [false],
+                    hintLabel: ['5289364'],
+                    controllers: [commercialRecordNumberController],
+                  ),
+
+                  // ExpansionTile section
+                  ExpansionTile(
+                    tilePadding: EdgeInsets.all(0),
+                    title: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: MyColors.custom_blue,
+                      ),
+                      child: Text(
+                        'معلومات السجل التجاري',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
                     ),
-                    Expanded(
-                      child: CustomListTileWithDate(
-                        forEdit: false,
-                        title: '  تاريخ التحديث   ',
+                    children: [
+                      CutomListTileWithTextFeild(
+                        title: 'التسلسل',
+                        numOfTxTf: 1,
+                        hintLabel: [''],
+                        controllers: [sequenceController],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                )
-              ],
+                      CutomListTileWithTextFeild(
+                        title: 'تسلسل السجل التجاري',
+                        numOfTxTf: 1,
+                        hintLabel: [''],
+                        controllers: [commercialRecordSequenceController],
+                      ),
+                      CutomListTileWithTextFeild(
+                        title: 'اصدار السجل التجاري',
+                        numOfTxTf: 1,
+                        hintLabel: [''],
+                        controllers: [commercialRecordIssuanceController],
+                      ),
+                      CustomListTile(
+                        element: CalendarPickerWidget(
+                          initialDate:
+                              '2020-09-05', // Example initial date string
+                          onDateSelected: (selectedDate) {
+                            setState(() {
+                              _commercialRegistrationDate = selectedDate;
+                            });
+                          },
+                        ),
+                        title: 'تاريخ السجل التجاري',
+                      ),
+                      CutomListTileWithTextFeild(
+                        title: 'وقائع التفويض',
+                        numOfTxTf: 1,
+                        maxline: 7,
+                        controllers: [authorizationDetailsController],
+                      ),
+                    ],
+                  ),
+
+                  // Widgets that should always be visible
+                  CutomListTileWithTextFeild(
+                    title: 'ملاحظات',
+                    numOfTxTf: 1,
+                    maxline: 4,
+                    controllers: [notesController],
+                  ),
+                  SizedBox(height: 30),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomListTileWithDate(
+                          forEdit: false,
+                          title: 'تاريخ السجل',
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomListTileWithDate(
+                          forEdit: false,
+                          title: 'تاريخ التحديث',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                ],
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }

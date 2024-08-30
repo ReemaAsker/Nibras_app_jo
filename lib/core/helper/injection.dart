@@ -9,8 +9,7 @@ final getIt = GetIt.instance;
 
 void initGetIt() {
   getIt.registerLazySingleton<CompanyCubit>(() => CompanyCubit(getIt()));
-  // getIt.registerLazySingleton<FilterCompaniesCubit>(
-  //     () => FilterCompaniesCubit(getIt()));
+
   getIt.registerLazySingleton<CompanyRepo>(() => CompanyRepo(getIt()));
   getIt.registerLazySingleton<WebServices>(
       () => WebServices(createAndSetupDio()));

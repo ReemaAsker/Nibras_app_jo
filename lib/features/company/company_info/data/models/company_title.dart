@@ -1,4 +1,6 @@
-class CompanyTitle {
+import '../../../../../core/interfaces/droppable.dart';
+
+class CompanyTitle extends Droppable {
   int? id;
   String? titlePrefix;
   String? titleSuffix;
@@ -18,4 +20,15 @@ class CompanyTitle {
     data['title_suffix'] = this.titleSuffix;
     return data;
   }
+
+  @override
+  String getDropValue() {
+    if (titleSuffix == null) {
+      return titlePrefix ?? "";
+    }
+    return "$titlePrefix, $titleSuffix";
+  }
+
+  @override
+  String getId() => id?.toString() ?? "";
 }

@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:nibras_group_jor/core/helper/constants/my_colors.dart';
 import 'package:nibras_group_jor/core/helper/constants/strings.dart';
@@ -46,137 +47,151 @@ class _MyWidgetState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white54, // Background color of the container
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0), // Padding around the container
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey, // Assigning the form key
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            'NIBRAS', // Title text
-                            style: TextStyle(
-                              letterSpacing: 12,
-                              color: MyColors.custom_yellow,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          Text(
-                            ' لادارة الشؤون القانونية', // Subtitle text
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 50), // Spacer
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0), // Padding around the container
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey, // Assigning the form key
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Column(
                       children: [
-                        Text(
-                          '$formattedTime', // Display formatted time
-                          style: TextStyle(
-                            color: MyColors.custom_yellow,
-                            fontSize: 14,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AnimatedTextKit(
+                              animatedTexts: [
+                                TyperAnimatedText(' NIBRAS',
+                                    textStyle: TextStyle(
+                                        letterSpacing: 28,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: MyColors.custom_blue)),
+                                TyperAnimatedText(
+                                    'نَـــــــــــبْـــــــــــــرَاسٌ',
+                                    textStyle: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: MyColors.custom_blue)),
+                              ],
+                              isRepeatingAnimation: true,
+                              totalRepeatCount: 10,
+                              pause: Duration(milliseconds: 4000),
+                            ),
+                          ],
                         ),
-                        Text(
-                          '$formattedDate', // Display formatted date
-                          style: TextStyle(
-                            color: MyColors.custom_yellow,
-                            fontSize: 14,
-                          ),
+                        AnimatedTextKit(
+                          animatedTexts: [
+                            TyperAnimatedText(' لادارة الشؤون القانونية',
+                                textStyle: TextStyle(
+                                    letterSpacing: 3,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: MyColors.custom_yellow)),
+                          ],
+                          isRepeatingAnimation: true,
+                          totalRepeatCount: 10,
+                          pause: Duration(milliseconds: 4000),
                         ),
                       ],
                     ),
-                    SizedBox(height: 40), // Spacer
-                    CustomTextField(
-                      validator: (value) => IsTextEmpty(value),
-                      label: 'اسم المستخدم', // Username field label
-                      hintText: '  ',
-                    ),
-                    SizedBox(height: 20), // Spacer
-                    CustomTextField(
-                      // validator: (value) => passwordValidation(value),
-                      label: 'كلمة المرور', // Password field label
-                      hintText: '  ',
-                      obscureText:
-                          !_isHidden, // Obscure text based on _isHidden
-                      suffixIcon: GestureDetector(
-                        onTap:
-                            _togglePasswordView, // Toggle password visibility
-                        child: Icon(
-                          _isHidden ? Icons.visibility : Icons.visibility_off,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        'تعديل كلمة المرور؟', // Text for password modification
+                  ),
+                  SizedBox(height: 50), // Spacer
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '$formattedTime', // Display formatted time
                         style: TextStyle(
-                          color: MyColors.custom_red,
-                          fontSize: 12,
+                          color: MyColors.custom_yellow,
+                          fontSize: 14,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 30), // Spacer
-                    InkWell(
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.pushReplacementNamed(context,
-                              homeScreen); // Navigate to home screen if the form is valid
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: MyColors.custom_yellow, // Button color
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(10)), // Button border radius
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'الدخول الى النظام', // Button text
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 120), // Spacer
-                    const Center(
-                      child: Text(
-                        'يــاخيـرَ ذاكــرةٍ تـُوَثِّقُ للـورى         ما خَطَّهُ الفِكْرُ السَّليمُ ونَظَّما ', // Arabic quote
+                      Text(
+                        '$formattedDate', // Display formatted date
                         style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                          color: MyColors.custom_yellow,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 40), // Spacer
+                  CustomTextField(
+                    validator: (value) => IsTextEmpty(value),
+                    label: 'اسم المستخدم', // Username field label
+                    hintText: '  ',
+                  ),
+                  SizedBox(height: 20), // Spacer
+                  CustomTextField(
+                    // validator: (value) => passwordValidation(value),
+                    label: 'كلمة المرور', // Password field label
+                    hintText: '  ',
+                    obscureText: !_isHidden, // Obscure text based on _isHidden
+                    suffixIcon: GestureDetector(
+                      onTap: _togglePasswordView, // Toggle password visibility
+                      child: Icon(
+                        _isHidden ? Icons.visibility : Icons.visibility_off,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'تعديل كلمة المرور؟', // Text for password modification
+                      style: TextStyle(
+                        color: MyColors.custom_red,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30), // Spacer
+                  InkWell(
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.pushReplacementNamed(context,
+                            homeScreen); // Navigate to home screen if the form is valid
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: MyColors.custom_yellow, // Button color
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(10)), // Button border radius
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'الدخول الى النظام', // Button text
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
-                    const Center(
-                      child: Text(
-                        'مسجل لدى دائرة المكتبة الوطنية تحت رقم ايداع (2023/3/1555) ', // Registration text
-                        style: TextStyle(
-                          color: MyColors.custom_dark_grey,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  ),
+                  SizedBox(height: 120), // Spacer
+                  const Center(
+                    child: Text(
+                      'يــاخيـرَ ذاكــرةٍ تـُوَثِّقُ للـورى         ما خَطَّهُ الفِكْرُ السَّليمُ ونَظَّما ', // Arabic quote
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const Center(
+                    child: Text(
+                      'مسجل لدى دائرة المكتبة الوطنية تحت رقم ايداع (2023/3/1555) ', // Registration text
+                      style: TextStyle(
+                        color: MyColors.custom_dark_grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

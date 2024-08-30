@@ -9,11 +9,6 @@ import 'package:nibras_group_jor/core/helper/injection.dart';
 import 'features/company/company_info/business_logic/cubit/company_cubit.dart';
 
 void main() {
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.dumpErrorToConsole(details);
-
-    // Optionally, you can also send these errors to a remote logging service.
-  };
   initGetIt();
   runApp(NibrasApp(
     appRouter: AppRouter(),
@@ -29,6 +24,7 @@ class NibrasApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => GetIt.instance<CompanyCubit>(),
       child: MaterialApp(
+        title: ' نــبـــراس لادارة الشؤون القانونية',
         theme: ThemeData(
           appBarTheme: AppBarTheme(
             color: MyColors

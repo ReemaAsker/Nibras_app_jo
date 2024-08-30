@@ -39,18 +39,23 @@ class CompanyCubit extends Cubit<CompanyState> {
 
   // }
   Future<int> noState() async {
+    int latestId = 0;
     emit(NoStateLoading());
-    List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
+    try {
+      List<CompanyInfoFromApi> companies = await company_Repo.getAllCompanies();
 
-    int latestId =
-        companies.map((company) => company.id).reduce((a, b) => a > b ? a : b);
-    List<CompanyRgistrationStatus> companiesTypes = await getCompanyTypes();
-    List<CompanyCountryNational> companiesNationality = await getNationals();
-    List<CompanyTitle> companiesTitles = await getCompanyTitles();
+      latestId = companies
+          .map((company) => company.id)
+          .reduce((a, b) => a > b ? a : b);
+      List<CompanyRgistrationStatus> companiesTypes = await getCompanyTypes();
+      List<CompanyCountryNational> companiesNationality = await getNationals();
+      List<CompanyTitle> companiesTitles = await getCompanyTitles();
 
-    emit(NoState(
-        latestId, companiesTypes, companiesNationality, companiesTitles));
-
+      emit(NoState(
+          latestId, companiesTypes, companiesNationality, companiesTitles));
+    } catch (e, st) {
+      emit(CompanyError(st.toString()));
+    }
     return latestId;
   }
 
@@ -118,7 +123,7 @@ class CompanyCubit extends Cubit<CompanyState> {
       bool response = await company_Repo.deleteCompany(id);
       if (response) {
         emit(CompanyDeletedSuccess(response, 'تمت عملية حذف المنشأة بنجاح !'));
-      } 
+      }
       // else {
       //   emit(CompanyNotFound('!الشركة المراد حذفها غير موجودة'));
       // }
