@@ -443,6 +443,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
 
                     if (!_isSearch) {
                       companyCubit.noState();
+                    } else {
+                      companyCubit.filterCompanies();
                     }
                   } catch (e, st) {
                     print("***********************");
@@ -462,6 +464,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                   child: IconButton(
                       onPressed: () {
                         _isDisplayAllCompanyData = false;
+
                         companyCubit.noState();
                       },
                       icon: Icon(
@@ -478,177 +481,233 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   }
 
   Widget mainWidget() {
-    return BlocListener<CompanyCubit, CompanyState>(
-      listener: (context, state) {
-        if (state is NoState) {
-          print("ggggggggggggggggggggggggggg");
-          new_id = state.lastId + 1;
-          companyRgistrationStatus = state.companyRgistrationStatus;
-          companyNational = state.nationalites;
-          companyTitles = state.CompanyTitles;
-          // companyTitles.forEach((title) {
-          //   print("title ${title.toJson()}");
-          // });
-          clearAllFields();
-        } else if (state is CompanyFromAPILoading) {
-        } else if (state is CompanyFilteringLoading) {
-        } else if (state is CompanySearch) {
-        } else if (state is NoStateLoading) {
-        } else if (state is CompanyLoading) {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.loading,
-            text: state.message,
-          );
-        } else if (state is CompanySuccess) {
-          CoolAlert.show(
-            title: "تم الانشاء",
-            context: context,
-            type: CoolAlertType.success,
-            text: state.message,
-          );
-          companyCubit.noState();
-        } else if (state is CompanyError) {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.error,
-            text: ' ( مشكلة في الانترنت)خطأ',
-          );
-          noActionColor = Colors.black;
-          // companyCubit.noState();
-        } else if (state is CompanyDeletedSuccess) {
-          CoolAlert.show(
-            title: "تم الحذف",
-            context: context,
-            type: CoolAlertType.success,
-            text: state.message,
-          );
-          _isDisplayAllCompanyData = false;
-          companyCubit.noState();
-        } else if (state is CompanyUpdatedSuccess) {
-          CoolAlert.show(
-            title: "تم التعديل",
-            context: context,
-            type: CoolAlertType.success,
-            text: state.message,
-          );
-          _isDisplayAllCompanyData = true;
-          // clearAllFields();
-          companyCubit.noState();
-          // companyCubit.noState();
-        }
-        // else if (state is CompanyNotFound) {
-        //   CoolAlert.show(
-        //     context: context,
-        //     type: CoolAlertType.error,
-        //     text: state.message,
-        //   );
-        //   clearAllFields();
-        //   toggleSearch();
-        // }
-        //else if (state is DisplyingDataSuccess) {
-        //   CoolAlert.show(
-        //     context: context,
-        //     type: CoolAlertType.success,
-        //     text: state.message,
-        //   );
-        //   fillCompanyData(state.data);
-        //   // _isSearch = false;
-        //   clearAllFields();
-        else if (state is DisplayingDataSuccess) {
-          _isSearch = false;
-          _isDisplayAllCompanyData = true;
-          selectedId = state.data.id!;
-
-          fillCompanyData(state.data);
-          CoolAlert.show(
-            context: context,
-            title:
-                "تم تحميل بيانات الشركة ${splitText(state.data.company_name!)["ComName"]} بنجاح",
-            type: CoolAlertType.success,
-          );
-        } else if (state is CompanyFromAPISuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('تم تحميل البيانات'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 1),
-          ));
+    return RefreshIndicator(
+      color: MyColors.custom_blue,
+      backgroundColor: MyColors.custom_yellow,
+      onRefresh: () async {
+        if (_isDisplayAllCompanyData) {
+          companyCubit.fetchCompanyDetails(currentCompany.id!);
         } else {
-          CoolAlert.show(
-            context: context,
-            type: CoolAlertType.error,
-            title: "حدثت مشكلة",
-            text: "!!!خطأ",
-          );
+          await companyCubit.noState();
         }
       },
-      child: Center(
-        child: SingleChildScrollView(
-          child: BlocBuilder<CompanyCubit, CompanyState>(
-            builder: (context, state) {
-              if (state is DisplayingDataSuccess) {
-                print("select state");
-                return Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      FormCompany(new_id, selectedCompany: state.data),
-                    ],
-                  ),
-                );
-              }
-              if (state is CompanyFromAPILoading ||
-                  state is CompanyFilteringLoading ||
-                  state is NoStateLoading) {
-                return Center(
+      child: BlocListener<CompanyCubit, CompanyState>(
+        listener: (context, state) {
+          if (state is CompanyInternetError) {
+            if (!_isDisplayAllCompanyData) {
+              clearAllFields();
+            }
+            CoolAlert.show(
+              title: "خطأ",
+              context: context,
+              type: CoolAlertType.error,
+              text: 'تعذر الاتصال بالإنترنت. يرجى التحقق من الاتصال الخاص بك',
+            );
+            noActionColor = Colors.black;
+          } else if (state is NoState) {
+            new_id = state.lastId + 1;
+            companyRgistrationStatus = state.companyRgistrationStatus;
+            companyNational = state.nationalites;
+            companyTitles = state.CompanyTitles;
+            noActionColor = MyColors.custom_blue;
+            clearAllFields();
+          } else if (state is CompanyFromAPILoading) {
+          } else if (state is CompanyFilteringLoading) {
+          } else if (state is CompanySearch) {
+          } else if (state is NoStateLoading) {
+          } else if (state is CompanyLoading) {
+          } else if (state is CompanySuccess) {
+            CoolAlert.show(
+              title: "تم الانشاء",
+              context: context,
+              type: CoolAlertType.success,
+              text: state.message,
+            );
+            companyCubit.noState();
+          } else if (state is CompanyError) {
+            if (!_isSearch) {
+              CoolAlert.show(
+                  title: 'لا يوجد انترنت',
+                  context: context,
+                  type: CoolAlertType.error,
+                  text: state.message);
+              // 'الاتصال بالإنترنت مفقود. تأكد من اتصالك بالشبكة');
+              noActionColor = Colors.black;
+            }
+            // clearAllFields();
+            // companyCubit.noState();
+          } else if (state is CompanyDeletedSuccess) {
+            CoolAlert.show(
+              title: "تم الحذف",
+              context: context,
+              type: CoolAlertType.success,
+              text: state.message,
+            );
+            _isDisplayAllCompanyData = false;
+            companyCubit.noState();
+          } else if (state is CompanyUpdatedSuccess) {
+            CoolAlert.show(
+              title: "تم التعديل",
+              context: context,
+              type: CoolAlertType.success,
+              text: state.message,
+            );
+            _isDisplayAllCompanyData = true;
+            // clearAllFields();
+            companyCubit.noState();
+            // companyCubit.noState();
+          }
+          // else if (state is CompanyNotFound) {
+          //   CoolAlert.show(
+          //     context: context,
+          //     type: CoolAlertType.error,
+          //     text: state.message,
+          //   );
+          //   clearAllFields();
+          //   toggleSearch();
+          // }
+          //else if (state is DisplyingDataSuccess) {
+          //   CoolAlert.show(
+          //     context: context,
+          //     type: CoolAlertType.success,
+          //     text: state.message,
+          //   );
+          //   fillCompanyData(state.data);
+          //   // _isSearch = false;
+          //   clearAllFields();
+          else if (state is DisplayingDataSuccess) {
+            _isSearch = false;
+            _isDisplayAllCompanyData = true;
+            selectedId = state.data.id!;
+
+            fillCompanyData(state.data);
+            CoolAlert.show(
+              context: context,
+              title:
+                  "تم تحميل بيانات الشركة ${splitText(state.data.company_name!)["ComName"]} بنجاح",
+              type: CoolAlertType.success,
+            );
+          } else if (state is CompanyFromAPISuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('تم تحميل البيانات'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 1),
+            ));
+          } else {
+            CoolAlert.show(
+              context: context,
+              type: CoolAlertType.error,
+              title: "حدثت مشكلة",
+              text: "!!!خطأ",
+            );
+          }
+        },
+        child: Center(
+          child: SingleChildScrollView(
+            child: BlocBuilder<CompanyCubit, CompanyState>(
+              builder: (context, state) {
+                if (state is CompanyInternetError) {}
+                if (state is DisplayingDataSuccess) {
+                  print("select state");
+                  return Form(
+                    key: _formKey,
                     child: Column(
-                  children: [
-                    // CircularProgressIndicator(
-                    //   color: MyColors.custom_yellow,
-                    // ),
+                      children: [
+                        FormCompany(new_id, selectedCompany: state.data),
+                      ],
+                    ),
+                  );
+                }
+                if (state is CompanyLoading ||
+                    state is CompanyFromAPILoading ||
+                    state is CompanyFilteringLoading ||
+                    state is NoStateLoading) {
+                  return Center(
+                      child: Column(
+                    children: [
+                      Center(child: Image.asset('assets/loading.gif')),
+                      Text(
+                        "جاري التحميل ..",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ));
+                } else if (state is CompanyFromAPISuccess) {
+                  final List<CompanyInfoFromApi> companyList = state.company;
+                  return _buildCompanyList(companyList);
+                }
+                //else if (state is CompanyError && _isSearch) {
+                //   return RefreshIndicator(
+                //     onRefresh: () async {
+                //       await companyCubit.filterCompanies();
+                //     },
+                //     child: Center(
+                //         child: Container(
+                //       height: 100,
+                //       width: 100,
+                //       child: Text(
+                //         'مشكلة في تحميل البيانات (افحص الانترنت)',
+                //         style: TextStyle(color: MyColors.custom_blue),
+                //       ),
+                //     )),
+                //   );
+                // }
+                else if (state is CompanyError && _isSearch) {
+                  return RefreshIndicator(
+                    color: MyColors.custom_blue,
+                    backgroundColor: MyColors.custom_yellow,
+                    onRefresh: () async {
+                      await companyCubit.filterCompanies();
+                    },
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Center(
+                        child: Container(
+                          height: MediaQuery.of(context)
+                              .size
+                              .height, // To make the scrollable area cover the screen height
+                          alignment: Alignment
+                              .center, // Center the content inside the scrollable area
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                ' مشكلة في تحميل البيانات (افحص الانترنت)',
+                                style: TextStyle(color: MyColors.custom_blue),
+                              ),
+                              Text('حاول مرة اخرى وحدث الصفحة'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                } else if (state is CompanySearch) {
+                  return _buildCompanyList(state.data);
+                }
+                if (_isSearch) {
+                  companyCubit.filterCompanies();
+                } else if (state is NoState) {
+                  return Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        FormCompany(state.lastId + 1),
+                      ],
+                    ),
+                  );
+                }
 
-                    Center(child: Image.asset('assets/loading.gif')),
-
-                    Text(
-                      "جاري التحميل ..",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ));
-              } else if (state is CompanyFromAPISuccess) {
-                final List<CompanyInfoFromApi> companyList = state.company;
-                return _buildCompanyList(companyList);
-              } else if (state is CompanyError && _isSearch) {
-                return Center(
-                    child: Text(
-                  'مشكلة في تحميل البيانات (افحص الانترنت)',
-                  style: TextStyle(color: MyColors.custom_blue),
-                ));
-              } else if (state is CompanySearch) {
-                return _buildCompanyList(state.data);
-              }
-              if (_isSearch) {
-                companyCubit.filterCompanies();
-              } else if (state is NoState) {
                 return Form(
                   key: _formKey,
                   child: Column(
                     children: [
-                      FormCompany(state.lastId + 1),
+                      FormCompany(new_id),
                     ],
                   ),
                 );
-              }
-
-              return Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    FormCompany(new_id),
-                  ],
-                ),
-              );
-            },
+              },
+            ),
           ),
         ),
       ),
@@ -943,15 +1002,58 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                         ),
                         onPressed: () async {
                           if (checkHasUpdates()) {
-                            Company cc = await updateCreateCompany();
-                            companyCubit.UpdateCompany(cc);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  // backgroundColor: MyColors.custom_yellow,
+                                  title: Text('تأكيد التعديل '),
+                                  content: Text(
+                                      ' سيتم اجراء التعديلات بعد الضغط على زر تأكيد التعديل هل أنت متأكد من البيانات المعدلة ؟'),
+                                  actions: [
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: MyColors
+                                            .custom_blue, // Change this to your desired color
+                                        foregroundColor: Colors
+                                            .white, // This sets the text color
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('إلغاء'),
+                                    ),
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Colors
+                                            .red, // Change this to your desired color
+                                        foregroundColor: Colors
+                                            .white, // This sets the text color
+                                      ),
+                                      onPressed: () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          Company cc =
+                                              await updateCreateCompany();
+                                          companyCubit.updateCompany(cc);
+                                        }
+
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('تأكيد التعديل'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  backgroundColor: MyColors.custom_blue,
-                                  content: Text('.. لم تقم بأي تعديلات')),
+                                  backgroundColor: MyColors.custom_yellow,
+                                  content: Text('لم تقم بأي تعديلات')),
                             );
                           }
+
+                          ////////////////////
                         },
                         child: Text(
                           "تعديل",
@@ -1004,12 +1106,19 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                                           .white, // This sets the text color
                                     ),
                                     onPressed: () {
-                                      print("!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                                      print(selectedId);
-                                      companyCubit.deleteCompany(selectedId);
-
-                                      Navigator.of(context).pop();
-                                      print("حذف");
+                                      if (noActionColor != Colors.black) {
+                                        companyCubit.deleteCompany(selectedId);
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              backgroundColor: Colors.red,
+                                              content: Text(
+                                                  'يتعذر حذف الشركة لعدم الاتصال بالانترنت')),
+                                        );
+                                      }
                                     },
                                     child: Text('حذف'),
                                   ),
@@ -1043,7 +1152,12 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
                               vertical: 12.0), // Adjust padding
                         ),
                         onPressed: () {
-                          if (nId == 1) {
+                          if (noActionColor == Colors.black) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  backgroundColor: Colors.red,
+                                  content: Text('لا يوجد اتصال بالانترنت')),
+                            );
                             return;
                           } else if (_formKey.currentState!.validate()) {
                             if (_selectedImage != null) {

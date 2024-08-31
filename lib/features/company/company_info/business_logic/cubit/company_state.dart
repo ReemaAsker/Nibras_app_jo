@@ -29,6 +29,10 @@ class CompanyError extends CompanyState {
   CompanyError(this.message);
 }
 
+class CompanyInternetError extends CompanyState {
+  CompanyInternetError();
+}
+
 class CompanyFromAPILoading extends CompanyState {
   final String message;
   CompanyFromAPILoading(this.message);

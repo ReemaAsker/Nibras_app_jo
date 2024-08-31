@@ -775,14 +775,15 @@ class ImagePickerState extends State<ImagePickerWidget> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        ListTile(
-                          leading: Icon(Icons.camera_alt),
-                          title: Text('التقط صورة بالكاميرا'),
-                          onTap: () {
-                            getImage(ImageSource.camera);
-                            Navigator.pop(context);
-                          },
-                        ),
+                        if (!kIsWeb)
+                          ListTile(
+                            leading: Icon(Icons.camera_alt),
+                            title: Text('التقط صورة بالكاميرا'),
+                            onTap: () {
+                              getImage(ImageSource.camera);
+                              Navigator.pop(context);
+                            },
+                          ),
                         ListTile(
                           leading: Icon(Icons.photo_library),
                           title: Text('اختر من الاستوديو'),
@@ -828,13 +829,17 @@ class ImagePickerState extends State<ImagePickerWidget> {
                                 color: Colors.black,
                               )
                             : widget.defaultIcon is String
-                                ? ClipOval(
-                                    child: Image.network(
-                                      widget.defaultIcon,
-                                      fit: BoxFit.cover,
-                                      width: 60,
-                                      height: 60,
-                                    ),
+                                ? Image.network(
+                                    widget.defaultIcon,
+                                    fit: BoxFit.cover,
+                                    width: 60,
+                                    height: 60,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return ClipOval(
+                                        child: Icon(Icons.image_not_supported,
+                                            size: 30, color: Colors.red),
+                                      );
+                                    },
                                   )
                                 : null
                         : null,
