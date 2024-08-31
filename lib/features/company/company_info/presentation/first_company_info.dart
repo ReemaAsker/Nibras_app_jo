@@ -1,10 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +11,6 @@ import 'package:nibras_group_jor/features/company/company_info/business_logic/cu
 import 'package:nibras_group_jor/features/company/company_info/data/models/CompanyRgistrationStatus.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company_country_national.dart';
 import 'package:nibras_group_jor/features/company/company_info/data/models/company_title.dart';
-import '../../../../core/helper/connectivity_service.dart';
 import '../../../../core/widgets/customListTile.dart';
 import '../../../../core/widgets/custom_drop_down_with_date.dart';
 import '../../../../core/widgets/custom_list_tile_with_drop.dart';
@@ -105,43 +99,16 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
   ];
   late String created_at;
   late String updated_at;
-  // final ConnectivityService connectivityService = ConnectivityService();
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   late Company currentCompany;
   @override
   void initState() {
     companyCubit.noState().then((value) => new_id = value + 1);
 
-    // companyCubit.noState();
-    // Listen to connectivity changes
-    // _connectivitySubscription =
-    //     _connectivity.onConnectivityChanged.listen((result) {
-    //   // Print the result to debug and see the connectivity change
-    //   print("Connectivity Result: $result");
-
-    //   if (result != ConnectivityResult.none) {
-    //     print("Connected to the internet");
-    //     companyCubit.noState();
-    //   } else {
-    //     print("NOOOOOOOOOOOOOOOOOOO Internet");
-    //     // Handle no internet connection scenario
-    //   }
-    // });
-    // print(_connectivitySubscription);
-    // _connectivitySubscription = Connectivity()
-    //     .onConnectivityChanged
-    //     .listen((List<ConnectivityResult> result) {
-    //   print("**************");
-    //   print(result);
     super.initState();
-    // });
   }
 
   @override
   void dispose() {
-    _connectivitySubscription.cancel();
-
     _textControllerForCompanyNameID.dispose();
     _textControllerForCompanyName.dispose();
     _textControllerForTradeMark.dispose();
@@ -201,39 +168,7 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
       ),
     );
   }
-//  String input = "(Eng.)Ahmd Ali(okok)";
-//
-// }
 
-  // Map<String, String> splitText(String input) {
-  //   // Define the regular expressions to extract the required parts
-  //   final RegExp prefixRegex = RegExp(r'\(([^)]+)\)');
-  //   final RegExp suffixRegex = RegExp(r'\(([^)]+)\)$');
-
-  //   // Extract the first part from parentheses
-  //   String first = '';
-  //   final firstMatch = prefixRegex.firstMatch(input);
-  //   if (firstMatch != null) {
-  //     first = firstMatch.group(1)!.trim();
-  //   }
-
-  //   // Extract the suffix part from parentheses at the end
-  //   String suffix = '';
-  //   final suffixMatch = suffixRegex.firstMatch(input);
-  //   if (suffixMatch != null) {
-  //     suffix = suffixMatch.group(1)!.trim();
-  //   }
-
-  //   // Extract the name part (the remaining text between the parentheses)
-  //   String ComName =
-  //       input.replaceAll(prefixRegex, '').replaceAll(suffixRegex, '').trim();
-
-  //   return {
-  //     'prefix': first,
-  //     'ComName': ComName,
-  //     'suffix': suffix,
-  //   };
-  // }
   Map<String, String> splitText(String input) {
     // Define the regular expressions to extract the required parts
     final RegExp prefixRegex = RegExp(r'\(([^)]+)\)');
@@ -552,8 +487,8 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
               type: CoolAlertType.success,
               text: state.message,
             );
-            _isDisplayAllCompanyData = true;
-            // clearAllFields();
+            _isDisplayAllCompanyData = false;
+            clearAllFields();
             companyCubit.noState();
             // companyCubit.noState();
           }
@@ -1250,16 +1185,6 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
 
   Future<Company> updateCreateCompany() async {
     late Company newCompany;
-    // Dio dio = Dio();
-    // // Download the image data as bytes using Dio
-    // final response = await dio.get<List<int>>(
-    //   _selectedImage,
-    //   options: Options(responseType: ResponseType.bytes),
-    // );
-    // Uint8List imageBytes;
-    // if (response.statusCode == 200) {
-    //   // Convert the downloaded image data to Uint8List
-    //   imageBytes = Uint8List.fromList(response.data!);
 
     try {
       newCompany = Company(
@@ -1293,136 +1218,4 @@ class _FirstCompnayInfoState extends State<FirstCompnayInfo> {
     }
     return newCompany;
   }
-
-  Future<void> createCompanyWebService(Company company) async {
-    Dio dio = Dio(BaseOptions(
-      baseUrl: 'https://srv568036.hstgr.cloud/api/',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    ));
-
-    // Convert company data to a Map
-    Map<String, dynamic> companyData = company.toJson();
-
-    // Add image data to FormData
-    MultipartFile? multipartFile;
-    if (company.picture is Uint8List) {
-      // Handle web image data
-      multipartFile = MultipartFile.fromBytes(
-        company.picture,
-        filename: 'company_picture.png', // Adjust the filename as needed
-      );
-    } else if (company.picture is File) {
-      // Handle mobile image data
-      multipartFile = await MultipartFile.fromFile(
-        company.picture.path,
-        filename: _selectedImage!.path.split('/').last,
-      );
-    }
-
-    // Add image data to companyData if needed
-    companyData['picture'] = multipartFile;
-
-    // Create FormData
-    FormData formData = FormData.fromMap(companyData);
-
-    final response = await dio.post(
-      'company/create-company',
-      data: formData,
-    );
-  }
-
-  Future<void> updateCompanyWebService(Company company) async {
-    Dio dio = Dio(BaseOptions(
-      baseUrl: 'https://srv568036.hstgr.cloud/api/',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    ));
-
-    // Convert company data to a Map
-    Map<String, dynamic> companyData = company.toJson();
-
-    // Add image data to FormData
-    MultipartFile? multipartFile;
-    if (company.picture is Uint8List) {
-      // Handle web image data
-      multipartFile = MultipartFile.fromBytes(
-        company.picture,
-        filename: 'company_picture.png', // Adjust the filename as needed
-      );
-    } else if (company.picture is File) {
-      // Handle mobile image data
-      multipartFile = await MultipartFile.fromFile(
-        company.picture.path,
-        filename: _selectedImage!.path.split('/').last,
-      );
-    }
-
-    // Add image data to companyData if needed
-    companyData['picture'] = multipartFile;
-
-    // Create FormData
-    FormData formData = FormData.fromMap(companyData);
-
-    final response = await dio.post(
-      'company/update-company',
-      data: formData,
-    );
-  }
 }
-// Future<Response<dynamic>> updateCompany({
-//   required int id,
-//   required String? companyName,
-//   required String? companyTrademark,
-//   required int? companyTitleId,
-//   required int? companyCountryId,
-//   required int? companyTypeId,
-//   required int? companyCatId,
-//   required String? nationalId,
-//   required String? registrationNumber,
-//   required String? phone,
-//   required String? mobile,
-//   required String? email,
-//   String? notes,
-//   required int? aAddress,
-//   required String? addressDesc,
-//   File? picture, // Use File type to represent the image
-// }) async {
-//   try {
-//     // Create FormData
-//     final formData = FormData.fromMap({
-//       'id': id,
-//       'company_name': companyName,
-//       'company_trademark': companyTrademark,
-//       'company_title_id': companyTitleId,
-//       'company_country_id': companyCountryId,
-//       'company_type_id': companyTypeId,
-//       'company_cat_id': companyCatId,
-//       'national_id': nationalId,
-//       'registration_number': registrationNumber,
-//       'phone': phone,
-//       'mobile': mobile,
-//       'email': email,
-//       'notes': notes,
-//       'a_address': aAddress,
-//       'address_desc': addressDesc,
-//       // Add picture if it's provided and handle it as MultipartFile
-//       if (picture != null)
-//         'picture':
-//             await MultipartFile.fromFile(picture.path, filename: 'picture.jpg'),
-//     });
-
-//     // Send the POST request
-//     final response = await _dio.post(
-//       'company/update-company', // Adjust the endpoint if necessary
-//       data: formData,
-//     );
-
-//     return response;
-//   } catch (e) {
-//     // Handle errors appropriately
-//     throw Exception('Failed to update company: $e');
-//   }
-// }

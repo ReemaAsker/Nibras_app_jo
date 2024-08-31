@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nibras_group_jor/core/helper/constants/strings.dart';
 import 'package:nibras_group_jor/features/Authontication/business_logic/cubit/auth_cubit.dart';
 import 'package:nibras_group_jor/features/Authontication/data/repo/authRepo.dart';
@@ -43,10 +42,3 @@ class AppRouter {
     }
   }
 }
-/*
-BlocProvider(
-                  create: (BuildContext context) => authCubit,
-                  child: const Login(),
-                ));
-
-*/

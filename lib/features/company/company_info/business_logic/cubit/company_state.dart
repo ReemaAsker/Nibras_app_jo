@@ -63,13 +63,6 @@ class CompanyUpdatedSuccess extends CompanyState {
   );
 }
 
-// class CompanyNotFound extends CompanyState {
-//   final String message;
-//   CompanyNotFound(
-//     this.message,
-//   );
-// }
-
 class CompanySearch extends CompanyState {
   final dynamic data;
   final String message;

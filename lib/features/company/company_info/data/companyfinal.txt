@@ -74,3 +74,4 @@ Map<String, dynamic> _$toJsonCompanyCreate(Company instance) =>
       'fax': instance.fax,
       'reg_r': instance.reg_r,
     };
+//nibras_group_jor
