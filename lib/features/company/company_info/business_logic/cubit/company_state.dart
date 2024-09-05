@@ -11,10 +11,9 @@ class CompanyLoading extends CompanyState {
 }
 
 class CompanySuccess extends CompanyState {
-  final dynamic company;
   final String message;
 
-  CompanySuccess(this.company, this.message);
+  CompanySuccess(this.message);
 }
 
 class CompanyFromAPISuccess extends CompanyState {
@@ -22,6 +21,12 @@ class CompanyFromAPISuccess extends CompanyState {
   final String message;
 
   CompanyFromAPISuccess(this.company, this.message);
+}
+
+class CompanyFromAPIError extends CompanyState {
+  final dynamic company;
+
+  CompanyFromAPIError(this.company);
 }
 
 class CompanyError extends CompanyState {
@@ -85,6 +90,11 @@ class CompanySelected extends CompanyState {
 class DisplayingDataSuccess extends CompanyState {
   final Company data;
   DisplayingDataSuccess(this.data);
+}
+
+class DisplayingDataError extends CompanyState {
+  final String data;
+  DisplayingDataError(this.data);
 }
 
 class NoState extends CompanyState {

@@ -127,7 +127,7 @@ class CompanyRepo {
     try {
       final response = await webservices.deleteCompany({'company_id': id});
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw _handleDioError(e);
     } on SocketException {
       throw AppException('No internet connection or server is unreachable');
@@ -140,7 +140,7 @@ class CompanyRepo {
     try {
       dynamic response = await webservices.updateCompany(updatedCompany);
       return response.success;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw _handleDioError(e);
     } on SocketException {
       throw AppException('No internet connection or server is unreachable');
@@ -155,7 +155,6 @@ class CompanyRepo {
           await webservices.getAllCompanies();
       return response.data;
     } on DioException catch (e) {
-      print(">>>>>>>>>>>>>>>>>>>>>>>>>>");
       throw _handleDioError(e);
     } on SocketException {
       throw AppException('No internet connection or server is unreachable');
@@ -168,7 +167,7 @@ class CompanyRepo {
     try {
       var response = await webservices.createCompany(newCompany);
       return response;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw _handleDioError(e);
     } on SocketException {
       throw AppException('No internet connection or server is unreachable');
@@ -182,7 +181,7 @@ class CompanyRepo {
       ApiResponse<List<CompanyRgistrationStatus>> companies =
           await webservices.getCompaniesTypes();
       return companies.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw _handleDioError(e);
     } on SocketException {
       throw AppException('No internet connection or server is unreachable');
@@ -196,7 +195,7 @@ class CompanyRepo {
       ApiResponse<List<CompanyTitle>> companies =
           await webservices.getCompaniesTitles();
       return companies.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw _handleDioError(e);
     } on SocketException {
       throw AppException('No internet connection or server is unreachable');
@@ -223,6 +222,7 @@ class CompanyRepo {
     if (e.type == DioExceptionType.unknown && e.error is SocketException) {
       return AppException('No internet connection or server is unreachable');
     }
+
     // else if (e.type == DioExceptionType.r) {
     //   return _handleError(e.response!);
     // }
